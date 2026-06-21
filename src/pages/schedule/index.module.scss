@@ -1,0 +1,298 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 120rpx;
+}
+
+.calendarCard {
+  background: $color-bg-card;
+  margin: $spacing-md $page-padding;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+
+  .calendarHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $spacing-lg;
+
+    .monthText {
+      font-size: $font-size-xl;
+      font-weight: $font-weight-semibold;
+      color: $color-text-primary;
+    }
+
+    .navBtns {
+      display: flex;
+      gap: $spacing-sm;
+
+      .navBtn {
+        @include button-reset;
+        width: 64rpx;
+        height: 64rpx;
+        border-radius: $radius-round;
+        background: $color-bg-page;
+        font-size: $font-size-lg;
+        color: $color-text-secondary;
+        transition: all $transition-base;
+
+        &:active {
+          background: $color-bg-hover;
+        }
+      }
+
+      .todayBtn {
+        @include button-reset;
+        height: 64rpx;
+        padding: 0 $spacing-md;
+        border-radius: $radius-button;
+        background: $color-primary-bg;
+        font-size: $font-size-sm;
+        color: $color-primary;
+        font-weight: $font-weight-medium;
+        transition: all $transition-base;
+
+        &:active {
+          opacity: 0.9;
+        }
+      }
+    }
+  }
+
+  .weekDays {
+    display: flex;
+    margin-bottom: $spacing-sm;
+
+    .weekDay {
+      flex: 1;
+      text-align: center;
+      font-size: $font-size-sm;
+      color: $color-text-tertiary;
+      padding: $spacing-sm 0;
+    }
+  }
+
+  .daysGrid {
+    display: flex;
+    flex-wrap: wrap;
+
+    .dayCell {
+      width: 14.2857%;
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4rpx;
+      position: relative;
+      transition: all $transition-base;
+
+      &:active {
+        background: $color-bg-hover;
+        border-radius: $radius-md;
+      }
+
+      &.selected {
+        .dayNum {
+          background: $color-primary;
+          color: $color-text-white;
+          width: 64rpx;
+          height: 64rpx;
+          border-radius: $radius-round;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: $font-weight-semibold;
+        }
+      }
+
+      &.today {
+        .dayNum {
+          color: $color-primary;
+          font-weight: $font-weight-semibold;
+        }
+      }
+
+      &.otherMonth {
+        .dayNum {
+          color: $color-text-disabled;
+        }
+      }
+
+      .dayNum {
+        font-size: $font-size-sm;
+        color: $color-text-primary;
+      }
+
+      .dots {
+        display: flex;
+        gap: 4rpx;
+        height: 12rpx;
+        align-items: center;
+
+        .dot {
+          width: 8rpx;
+          height: 8rpx;
+          border-radius: 50%;
+
+          &.ongoing {
+            background: $color-success;
+          }
+
+          &.upcoming {
+            background: $color-warning;
+          }
+        }
+      }
+    }
+  }
+
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: $spacing-xl;
+    margin-top: $spacing-lg;
+    padding-top: $spacing-md;
+    border-top: 1rpx solid $color-divider;
+
+    .legendItem {
+      display: flex;
+      align-items: center;
+      gap: 8rpx;
+
+      .dot {
+        width: 12rpx;
+        height: 12rpx;
+        border-radius: 50%;
+
+        &.ongoing { background: $color-success; }
+        &.upcoming { background: $color-warning; }
+      }
+
+      .text {
+        font-size: $font-size-xs;
+        color: $color-text-secondary;
+      }
+    }
+  }
+}
+
+.daySummary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md $page-padding;
+  margin: 0 $page-padding $spacing-md;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+
+  .dateText {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+  }
+
+  .capacity {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+
+    .num {
+      color: $color-primary;
+      font-weight: $font-weight-semibold;
+    }
+  }
+}
+
+.petList {
+  padding: 0 $page-padding;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.sectionTitle {
+  padding: $spacing-sm $page-padding;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80rpx 0;
+  gap: $spacing-md;
+
+  .icon {
+    font-size: 100rpx;
+    opacity: 0.3;
+  }
+
+  .text {
+    font-size: $font-size-sm;
+    color: $color-text-tertiary;
+  }
+}
+
+.miniPetCard {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+
+  .avatar {
+    width: 80rpx;
+    height: 80rpx;
+    border-radius: $radius-round;
+    object-fit: cover;
+  }
+
+  .info {
+    flex: 1;
+
+    .name {
+      font-size: $font-size-md;
+      font-weight: $font-weight-semibold;
+      color: $color-text-primary;
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+    }
+
+    .dates {
+      font-size: $font-size-xs;
+      color: $color-text-secondary;
+      margin-top: 4rpx;
+    }
+  }
+
+  .status {
+    font-size: $font-size-xs;
+    padding: 6rpx 16rpx;
+    border-radius: $radius-sm;
+
+    &.ongoing {
+      background: $color-success-light;
+      color: $color-success;
+    }
+
+    &.upcoming {
+      background: $color-warning-light;
+      color: $color-warning;
+    }
+
+    &.checkout {
+      background: $color-primary-bg;
+      color: $color-primary;
+    }
+  }
+}

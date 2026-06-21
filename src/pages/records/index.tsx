@@ -1,0 +1,185 @@
+import React, { useState, useEffect, useMemo } from 'react';
+import { View, Text, Button, Image, ScrollView } from '@tarojs/components';
+import Taro from '@tarojs/taro';
+import styles from './index.module.scss';
+import { mockRecords } from '@/data/records';
+import type { CareRecord, RecordType } from '@/types';
+import { formatDate, getRecordTypeText } from '@/utils';
+import classnames from 'classnames';
+
+const typeIcons: Record<string, string> = {
+  feed: '🍖',
+  walk: '🐾',
+  medicine: '💊',
+  photo: '📷',
+  abnormal: '⚠️',
+  handover: '📦'
+};
+
+const filterOptions = [
+  { key: 'all', label: '全部' },
+  { key: 'feed', label: '喂食' },
+  { key: 'walk', label: '遛弯' },
+  { key: 'medicine', label: '用药' },
+  { key: 'photo', label: '照片' },
+  { key: 'abnormal', label: '异常' }
+];
+
+const RecordsPage: React.FC = () => {
+  const [records, setRecords] = useState<CareRecord[]>([]);
+  const [activeFilter, setActiveFilter] = useState<string>('all');
+
+  useEffect(() => {
+    loadRecords();
+  }, []);
+
+  const loadRecords = () => {
+    setTimeout(() => {
+      setRecords([...mockRecords].sort((a, b) => 
+        new Date(b.time).getTime() - new Date(a.time).getTime()
+      ));
+    }, 200);
+  };
+
+  const filteredRecords = useMemo(() => {
+    if (activeFilter === 'all') return records;
+    return records.filter((r) => r.type === activeFilter);
+  }, [records, activeFilter]);
+
+  const groupedRecords = useMemo(() => {
+    const groups: Record<string, CareRecord[]> = {};
+    filteredRecords.forEach((record) => {
+      const date = formatDate(record.time);
+      if (!groups[date]) groups[date] = [];
+      groups[date].push(record);
+    });
+    return groups;
+  }, [filteredRecords]);
+
+  const handleAddRecord = () => {
+    console.log('[Records] 新增照护记录');
+    Taro.showActionSheet({
+      itemList: ['喂食记录', '遛弯记录', '用药记录', '照片视频', '异常提醒', '交接物品'],
+      success: (res) => {
+        const types: RecordType[] = ['feed', 'walk', 'medicine', 'photo', 'abnormal', 'handover'];
+        const type = types[res.tapIndex];
+        Taro.showToast({ title: `添加${getRecordTypeText(type)}记录`, icon: 'none' });
+        console.log('[Records] 选择添加类型:', type);
+      }
+    });
+  };
+
+  const handleRecordClick = (record: CareRecord) => {
+    console.log('[Records] 查看记录详情:', record.id);
+    Taro.showToast({ title: '记录详情开发中', icon: 'none' });
+  };
+
+  const handleImagePreview = (image: string, images: string[]) => {
+    Taro.previewImage({
+      current: image,
+      urls: images
+    });
+  };
+
+  return (
+    <View className={styles.page}>
+      <ScrollView className={styles.filterTabs} scrollX>
+        {filterOptions.map((tab) => (
+          <Button
+            key={tab.key}
+            className={classnames(styles.tabItem, { [styles.active]: activeFilter === tab.key })}
+            onClick={() => setActiveFilter(tab.key)}
+          >
+            {tab.label}
+          </Button>
+        ))}
+      </ScrollView>
+
+      <ScrollView scrollY style={{ height: 'calc(100vh - 180rpx)' }}>
+        <View className={styles.recordList}>
+          <View className={styles.timelineLine} />
+          
+          {Object.keys(groupedRecords).length > 0 ? (
+            Object.entries(groupedRecords).map(([date, dayRecords]) => (
+              <View key={date} className={styles.dateGroup}>
+                <View className={styles.dateHeader}>
+                  <Text className={styles.dateText}>{date}</Text>
+                  <Text className={styles.count}>{dayRecords.length}条记录</Text>
+                </View>
+                {dayRecords.map((record) => (
+                  <View
+                    key={record.id}
+                    className={classnames(styles.recordCard, {
+                      [styles.abnormal]: record.isAbnormal
+                    })}
+                    onClick={() => handleRecordClick(record)}
+                  >
+                    <View
+                      className={classnames(styles.timelineDot, styles[record.type])}
+                    />
+                    
+                    <View className={styles.cardHeader}>
+                      <View className={styles.left}>
+                        <View
+                          className={classnames(styles.typeIcon, styles[record.type])}
+                        >
+                          {typeIcons[record.type]}
+                        </View>
+                        <View className={styles.titleWrap}>
+                          <Text className={styles.title}>{record.title}</Text>
+                          <Text className={styles.time}>
+                            {new Date(record.time).toLocaleTimeString('zh-CN', {
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </Text>
+                        </View>
+                      </View>
+                      <Text className={styles.petName}>{record.petName}</Text>
+                    </View>
+
+                    {record.isAbnormal && (
+                      <Text className={styles.abnormalBadge}>
+                        ⚠️ {record.abnormalDesc}
+                      </Text>
+                    )}
+
+                    <Text className={styles.content}>{record.content}</Text>
+
+                    {record.images && record.images.length > 0 && (
+                      <View className={styles.imageList}>
+                        {record.images.map((img, idx) => (
+                          <Image
+                            key={idx}
+                            className={styles.imageItem}
+                            src={img}
+                            mode="aspectFill"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleImagePreview(img, record.images!);
+                            }}
+                          />
+                        ))}
+                      </View>
+                    )}
+                  </View>
+                ))}
+              </View>
+            ))
+          ) : (
+            <View className={styles.empty}>
+              <Text className={styles.icon}>📝</Text>
+              <Text className={styles.text}>暂无照护记录</Text>
+            </View>
+          )}
+        </View>
+      </ScrollView>
+
+      <Button className={styles.addBtn} onClick={handleAddRecord}>
+        +
+      </Button>
+    </View>
+  );
+};
+
+export default RecordsPage;

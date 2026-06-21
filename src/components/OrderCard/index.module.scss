@@ -1,0 +1,161 @@
+@use '@/styles/variables.scss' as *;
+
+.orderCard {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .petInfo {
+      display: flex;
+      align-items: center;
+      gap: $spacing-md;
+
+      .avatar {
+        width: 96rpx;
+        height: 96rpx;
+        border-radius: $radius-round;
+        object-fit: cover;
+      }
+
+      .info {
+        display: flex;
+        flex-direction: column;
+        gap: 8rpx;
+
+        .nameRow {
+          display: flex;
+          align-items: center;
+          gap: $spacing-sm;
+
+          .name {
+            font-size: $font-size-lg;
+            font-weight: $font-weight-semibold;
+            color: $color-text-primary;
+          }
+        }
+
+        .meta {
+          font-size: $font-size-sm;
+          color: $color-text-secondary;
+        }
+      }
+    }
+
+    .status {
+      font-size: $font-size-sm;
+      font-weight: $font-weight-medium;
+
+      &.pending { color: $color-warning; }
+      &.accepted { color: $color-primary; }
+      &.ongoing { color: $color-success; }
+      &.completed { color: $color-text-tertiary; }
+      &.cancelled { color: $color-text-tertiary; }
+    }
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+    padding: $spacing-md 0;
+    border-top: 1rpx solid $color-divider;
+    border-bottom: 1rpx solid $color-divider;
+
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .label {
+        font-size: $font-size-sm;
+        color: $color-text-secondary;
+      }
+
+      .value {
+        font-size: $font-size-sm;
+        color: $color-text-primary;
+      }
+    }
+
+    .dateRow {
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+
+      .date {
+        font-size: $font-size-sm;
+        color: $color-text-primary;
+        font-weight: $font-weight-medium;
+      }
+
+      .arrow {
+        color: $color-text-tertiary;
+        font-size: $font-size-sm;
+      }
+
+      .days {
+        font-size: $font-size-xs;
+        color: $color-text-tertiary;
+        padding: 4rpx 12rpx;
+        background: $color-bg-tag;
+        border-radius: $radius-xs;
+      }
+    }
+  }
+
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .price {
+      font-size: $font-size-xl;
+      font-weight: $font-weight-semibold;
+      color: $color-price;
+
+      .unit {
+        font-size: $font-size-sm;
+        font-weight: $font-weight-normal;
+      }
+    }
+
+    .actions {
+      display: flex;
+      gap: $spacing-sm;
+
+      .btn {
+        @include button-reset;
+        height: $button-height-sm;
+        padding: 0 $spacing-lg;
+        border-radius: $radius-button;
+        font-size: $font-size-sm;
+        transition: all $transition-base;
+
+        &:active {
+          opacity: 0.9;
+          transform: scale(0.98);
+        }
+
+        &.primary {
+          background: $color-primary;
+          color: $color-text-white;
+        }
+
+        &.outline {
+          background: transparent;
+          border: 1rpx solid $color-border;
+          color: $color-text-secondary;
+        }
+      }
+    }
+  }
+}

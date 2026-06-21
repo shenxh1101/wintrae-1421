@@ -1,0 +1,52 @@
+@use '@/styles/variables.scss' as *;
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4rpx 16rpx;
+  border-radius: $radius-sm;
+  font-size: $font-size-xs;
+  line-height: 1.4;
+  white-space: nowrap;
+
+  &.default {
+    background: $color-bg-tag;
+    color: $color-primary;
+  }
+
+  &.success {
+    background: $color-success-light;
+    color: $color-success;
+  }
+
+  &.warning {
+    background: $color-warning-light;
+    color: $color-warning;
+  }
+
+  &.error {
+    background: $color-error-light;
+    color: $color-error;
+  }
+
+  &.info {
+    background: rgba(33, 150, 243, 0.1);
+    color: $color-info;
+  }
+
+  &.dog {
+    background: rgba(255, 156, 112, 0.15);
+    color: $color-pet-dog;
+  }
+
+  &.cat {
+    background: rgba(124, 77, 255, 0.15);
+    color: $color-pet-cat;
+  }
+
+  &.outline {
+    background: transparent;
+    border: 1rpx solid $color-border;
+    color: $color-text-secondary;
+  }
+}

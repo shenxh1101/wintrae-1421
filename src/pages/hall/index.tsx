@@ -1,0 +1,168 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, Button, ScrollView } from '@tarojs/components';
+import Taro from '@tarojs/taro';
+import styles from './index.module.scss';
+import OrderCard from '@/components/OrderCard';
+import { mockOrders } from '@/data/orders';
+import type { Order, OrderStatus } from '@/types';
+import classnames from 'classnames';
+
+const filterOptions = [
+  { key: 'all', label: '全部' },
+  { key: 'pending', label: '待接单' },
+  { key: 'accepted', label: '已接单' },
+  { key: 'ongoing', label: '入住中' },
+  { key: 'completed', label: '已完成' }
+];
+
+const HallPage: React.FC = () => {
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [activeFilter, setActiveFilter] = useState<string>('all');
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    loadOrders();
+  }, []);
+
+  const loadOrders = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setOrders(mockOrders);
+      setLoading(false);
+    }, 300);
+  };
+
+  const onRefresh = useCallback(() => {
+    loadOrders();
+    Taro.stopPullDownRefresh();
+  }, []);
+
+  useEffect(() => {
+    Taro.onPullDownRefresh(() => {
+      onRefresh();
+    });
+  }, [onRefresh]);
+
+  const filteredOrders = orders.filter((order) => {
+    if (activeFilter === 'all') return true;
+    return order.status === activeFilter;
+  });
+
+  const handleAccept = (order: Order) => {
+    Taro.showModal({
+      title: '确认接单',
+      content: `确定要接收${order.petName}的寄养订单吗？`,
+      success: (res) => {
+        if (res.confirm) {
+          setOrders((prev) =>
+            prev.map((o) =>
+              o.id === order.id ? { ...o, status: 'accepted' as OrderStatus } : o
+            )
+          );
+          Taro.showToast({ title: '接单成功', icon: 'success' });
+          console.log('[Hall] 接单成功:', order.orderNo);
+        }
+      }
+    });
+  };
+
+  const handleReject = (order: Order) => {
+    Taro.showModal({
+      title: '拒绝订单',
+      content: `确定要拒绝${order.petName}的寄养订单吗？`,
+      success: (res) => {
+        if (res.confirm) {
+          setOrders((prev) => prev.filter((o) => o.id !== order.id));
+          Taro.showToast({ title: '已拒绝', icon: 'none' });
+          console.log('[Hall] 拒绝订单:', order.orderNo);
+        }
+      }
+    });
+  };
+
+  const handleOrderClick = (order: Order) => {
+    console.log('[Hall] 查看订单详情:', order.orderNo);
+    Taro.showToast({ title: '订单详情开发中', icon: 'none' });
+  };
+
+  const handleSetting = () => {
+    console.log('[Hall] 进入服务设置');
+    Taro.showToast({ title: '服务设置开发中', icon: 'none' });
+  };
+
+  const stats = {
+    checkIn: orders.filter((o) => o.status === 'ongoing').length,
+    checkOut: 2,
+    pending: orders.filter((o) => o.status === 'pending').length,
+    monthIncome: '2,340'
+  };
+
+  return (
+    <View className={styles.page}>
+      <View className={styles.header}>
+        <View className={styles.greeting}>
+          <View className={styles.text}>
+            <Text className={styles.hello}>早上好，寄养管家</Text>
+            <Text className={styles.title}>今天有 {stats.pending} 个新订单</Text>
+          </View>
+          <Button className={styles.settingBtn} onClick={handleSetting}>
+            ⚙
+          </Button>
+        </View>
+      </View>
+
+      <View className={styles.statsRow}>
+        <View className={styles.statItem}>
+          <Text className={styles.value}>{stats.checkIn}</Text>
+          <Text className={styles.label}>今日入住</Text>
+        </View>
+        <View className={styles.statItem}>
+          <Text className={styles.value}>{stats.checkOut}</Text>
+          <Text className={styles.label}>今日离店</Text>
+        </View>
+        <View className={styles.statItem}>
+          <Text className={styles.value} style={{ color: '#ff7a45' }}>{stats.pending}</Text>
+          <Text className={styles.label}>待接单</Text>
+        </View>
+        <View className={styles.statItem}>
+          <Text className={styles.value} style={{ color: '#4caf50' }}>¥{stats.monthIncome}</Text>
+          <Text className={styles.label}>本月收入</Text>
+        </View>
+      </View>
+
+      <ScrollView className={styles.filterTabs} scrollX>
+        {filterOptions.map((tab) => (
+          <Button
+            key={tab.key}
+            className={classnames(styles.tabItem, { [styles.active]: activeFilter === tab.key })}
+            onClick={() => setActiveFilter(tab.key)}
+          >
+            {tab.label}
+          </Button>
+        ))}
+      </ScrollView>
+
+      <View className={styles.orderList}>
+        {filteredOrders.length > 0 ? (
+          filteredOrders.map((order) => (
+            <OrderCard
+              key={order.id}
+              order={order}
+              showActions={order.status === 'pending'}
+              onAccept={handleAccept}
+              onReject={handleReject}
+              onClick={handleOrderClick}
+            />
+          ))
+        ) : (
+          <View className={styles.empty}>
+            <Text className={styles.icon}>📋</Text>
+            <Text className={styles.text}>暂无订单</Text>
+          </View>
+        )}
+      </View>
+    </View>
+  );
+};
+
+export default HallPage;

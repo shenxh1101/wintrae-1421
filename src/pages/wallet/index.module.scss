@@ -1,0 +1,416 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 120rpx;
+}
+
+.walletHeader {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  padding: 48rpx $page-padding 100rpx;
+  color: $color-text-white;
+
+  .title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-medium;
+    opacity: 0.9;
+    margin-bottom: $spacing-lg;
+  }
+
+  .balance {
+    .label {
+      font-size: $font-size-sm;
+      opacity: 0.8;
+    }
+
+    .amount {
+      font-size: 72rpx;
+      font-weight: $font-weight-bold;
+      margin-top: 8rpx;
+
+      .unit {
+        font-size: $font-size-lg;
+        font-weight: $font-weight-normal;
+        margin-right: 8rpx;
+      }
+    }
+  }
+
+  .statsRow {
+    display: flex;
+    margin-top: $spacing-xl;
+    gap: $spacing-xl;
+
+    .statItem {
+      .label {
+        font-size: $font-size-xs;
+        opacity: 0.8;
+      }
+
+      .value {
+        font-size: $font-size-lg;
+        font-weight: $font-weight-semibold;
+        margin-top: 8rpx;
+      }
+    }
+  }
+}
+
+.actionRow {
+  display: flex;
+  gap: $spacing-md;
+  margin: -48rpx $page-padding 0;
+  position: relative;
+  z-index: 2;
+
+  .actionCard {
+    flex: 1;
+    background: $color-bg-card;
+    border-radius: $radius-lg;
+    padding: $spacing-lg;
+    text-align: center;
+    box-shadow: $shadow-card;
+    transition: all $transition-base;
+
+    &:active {
+      transform: scale(0.98);
+    }
+
+    .icon {
+      font-size: 48rpx;
+      margin-bottom: $spacing-sm;
+    }
+
+    .title {
+      font-size: $font-size-sm;
+      color: $color-text-primary;
+      font-weight: $font-weight-medium;
+    }
+
+    .subText {
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
+      margin-top: 4rpx;
+    }
+  }
+}
+
+.chartCard {
+  background: $color-bg-card;
+  margin: $spacing-md $page-padding;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+
+  .cardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $spacing-lg;
+
+    .title {
+      font-size: $font-size-md;
+      font-weight: $font-weight-semibold;
+      color: $color-text-primary;
+    }
+
+    .subText {
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
+    }
+  }
+
+  .chartContainer {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    height: 240rpx;
+    padding: 0 $spacing-sm;
+
+    .barItem {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: $spacing-sm;
+      flex: 1;
+
+      .bar {
+        width: 36rpx;
+        border-radius: 18rpx 18rpx 4rpx 4rpx;
+        background: linear-gradient(180deg, $color-primary 0%, $color-primary-light 100%);
+        min-height: 8rpx;
+        transition: all $transition-base;
+
+        &.active {
+          background: linear-gradient(180deg, $color-primary-dark 0%, $color-primary 100%);
+        }
+      }
+
+      .month {
+        font-size: $font-size-xs;
+        color: $color-text-tertiary;
+      }
+
+      .amount {
+        font-size: $font-size-xs;
+        color: $color-text-secondary;
+        font-weight: $font-weight-medium;
+      }
+    }
+  }
+}
+
+.tabSection {
+  margin: $spacing-md $page-padding;
+
+  .tabHeader {
+    display: flex;
+    gap: $spacing-xl;
+    margin-bottom: $spacing-md;
+
+    .tabItem {
+      @include button-reset;
+      font-size: $font-size-md;
+      color: $color-text-secondary;
+      padding: 0;
+      position: relative;
+      transition: all $transition-base;
+
+      &.active {
+        color: $color-text-primary;
+        font-weight: $font-weight-semibold;
+
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: -12rpx;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 40rpx;
+          height: 6rpx;
+          background: $color-primary;
+          border-radius: 3rpx;
+        }
+      }
+    }
+  }
+}
+
+.incomeList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+
+  .incomeItem {
+    background: $color-bg-card;
+    border-radius: $radius-lg;
+    padding: $spacing-lg;
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    box-shadow: $shadow-card;
+
+    .icon {
+      width: 80rpx;
+      height: 80rpx;
+      border-radius: $radius-round;
+      background: $color-success-light;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36rpx;
+      flex-shrink: 0;
+    }
+
+    .info {
+      flex: 1;
+      min-width: 0;
+
+      .title {
+        font-size: $font-size-md;
+        color: $color-text-primary;
+        font-weight: $font-weight-medium;
+      }
+
+      .orderNo {
+        font-size: $font-size-xs;
+        color: $color-text-tertiary;
+        margin-top: 4rpx;
+      }
+
+      .time {
+        font-size: $font-size-xs;
+        color: $color-text-tertiary;
+        margin-top: 4rpx;
+      }
+    }
+
+    .amount {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-semibold;
+      color: $color-success;
+      flex-shrink: 0;
+
+      &.pending {
+        color: $color-warning;
+      }
+    }
+
+    .status {
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
+      margin-top: 4rpx;
+      text-align: right;
+    }
+  }
+}
+
+.reviewList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+
+  .reviewItem {
+    background: $color-bg-card;
+    border-radius: $radius-lg;
+    padding: $spacing-lg;
+    box-shadow: $shadow-card;
+
+    .reviewHeader {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: $spacing-md;
+
+      .left {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+
+        .petName {
+          font-size: $font-size-md;
+          font-weight: $font-weight-semibold;
+          color: $color-text-primary;
+        }
+
+        .owner {
+          font-size: $font-size-xs;
+          color: $color-text-tertiary;
+        }
+      }
+
+      .rating {
+        color: #ffc107;
+        font-size: $font-size-sm;
+      }
+    }
+
+    .content {
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+      line-height: $line-height-loose;
+      margin-bottom: $spacing-md;
+    }
+
+    .reply {
+      background: $color-bg-page;
+      border-radius: $radius-md;
+      padding: $spacing-md;
+      margin-top: $spacing-sm;
+
+      .replyLabel {
+        font-size: $font-size-xs;
+        color: $color-primary;
+        font-weight: $font-weight-medium;
+        margin-bottom: 8rpx;
+      }
+
+      .replyContent {
+        font-size: $font-size-sm;
+        color: $color-text-secondary;
+        line-height: $line-height-normal;
+      }
+    }
+
+    .time {
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
+      margin-top: $spacing-sm;
+    }
+
+    .replyBtn {
+      @include button-reset;
+      margin-top: $spacing-sm;
+      padding: 8rpx 24rpx;
+      border-radius: $radius-button;
+      background: $color-primary-bg;
+      color: $color-primary;
+      font-size: $font-size-xs;
+      align-self: flex-start;
+      transition: all $transition-base;
+
+      &:active {
+        opacity: 0.9;
+      }
+    }
+  }
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80rpx 0;
+  gap: $spacing-md;
+
+  .icon {
+    font-size: 100rpx;
+    opacity: 0.3;
+  }
+
+  .text {
+    font-size: $font-size-sm;
+    color: $color-text-tertiary;
+  }
+}
+
+.featureGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $spacing-md;
+  margin: $spacing-md $page-padding;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+
+  .featureItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-sm;
+    transition: all $transition-base;
+
+    &:active {
+      opacity: 0.7;
+    }
+
+    .icon {
+      width: 80rpx;
+      height: 80rpx;
+      border-radius: $radius-lg;
+      background: $color-primary-bg;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36rpx;
+    }
+
+    .label {
+      font-size: $font-size-xs;
+      color: $color-text-secondary;
+    }
+  }
+}

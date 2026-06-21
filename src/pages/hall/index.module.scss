@@ -1,0 +1,136 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 120rpx;
+}
+
+.header {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  padding: 48rpx $page-padding 80rpx;
+  color: $color-text-white;
+
+  .greeting {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-lg;
+
+    .text {
+      .hello {
+        font-size: $font-size-lg;
+        font-weight: $font-weight-medium;
+        opacity: 0.9;
+      }
+
+      .title {
+        font-size: $font-size-xxl;
+        font-weight: $font-weight-bold;
+        margin-top: 8rpx;
+      }
+    }
+
+    .settingBtn {
+      @include button-reset;
+      width: 80rpx;
+      height: 80rpx;
+      border-radius: $radius-round;
+      background: rgba(255, 255, 255, 0.2);
+      color: $color-text-white;
+      font-size: $font-size-xl;
+      transition: all $transition-base;
+
+      &:active {
+        transform: scale(0.95);
+        background: rgba(255, 255, 255, 0.3);
+      }
+    }
+  }
+}
+
+.statsRow {
+  display: flex;
+  gap: $spacing-md;
+  margin: -48rpx $page-padding 0;
+  position: relative;
+  z-index: 2;
+
+  .statItem {
+    flex: 1;
+    background: $color-bg-card;
+    border-radius: $radius-lg;
+    padding: $spacing-md;
+    box-shadow: $shadow-card;
+    text-align: center;
+
+    .value {
+      font-size: $font-size-xxl;
+      font-weight: $font-weight-bold;
+      color: $color-text-primary;
+    }
+
+    .label {
+      font-size: $font-size-xs;
+      color: $color-text-secondary;
+      margin-top: 8rpx;
+    }
+  }
+}
+
+.filterTabs {
+  display: flex;
+  padding: $spacing-lg $page-padding $spacing-md;
+  gap: $spacing-sm;
+  overflow-x: auto;
+
+  @include scroll-x-container;
+
+  .tabItem {
+    @include scroll-x-item(auto);
+    @include button-reset;
+    padding: 12rpx 28rpx;
+    border-radius: $radius-button;
+    font-size: $font-size-sm;
+    background: $color-bg-card;
+    color: $color-text-secondary;
+    white-space: nowrap;
+    transition: all $transition-base;
+
+    &:active {
+      opacity: 0.9;
+    }
+
+    &.active {
+      background: $color-primary;
+      color: $color-text-white;
+      font-weight: $font-weight-medium;
+    }
+  }
+}
+
+.orderList {
+  padding: 0 $page-padding;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 0;
+  gap: $spacing-md;
+
+  .icon {
+    font-size: 120rpx;
+    opacity: 0.3;
+  }
+
+  .text {
+    font-size: $font-size-sm;
+    color: $color-text-tertiary;
+  }
+}
