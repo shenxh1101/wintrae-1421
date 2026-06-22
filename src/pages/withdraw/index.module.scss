@@ -282,11 +282,40 @@
       margin-bottom: $spacing-md;
     }
 
+    .successAmount {
+      font-size: 56rpx;
+      font-weight: $font-weight-bold;
+      color: $color-danger;
+      margin-bottom: $spacing-md;
+    }
+
     .desc {
       font-size: $font-size-sm;
       color: $color-text-secondary;
       line-height: $line-height-loose;
       margin-bottom: $spacing-xl;
+    }
+
+    .successBtns {
+      display: flex;
+      gap: $spacing-md;
+
+      .btn {
+        @include button-reset;
+        flex: 1;
+        height: $button-height-lg;
+        background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+        color: $color-text-white;
+        font-size: $font-size-md;
+        font-weight: $font-weight-semibold;
+        border-radius: $radius-button;
+
+        &.btnOutline {
+          background: transparent;
+          border: 2rpx solid $color-primary;
+          color: $color-primary;
+        }
+      }
     }
 
     .btn {

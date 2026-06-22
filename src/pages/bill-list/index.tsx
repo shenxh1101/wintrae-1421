@@ -54,7 +54,15 @@ const BillListPage: React.FC = () => {
     if (record.status === 'pending') {
       return record.type === 'income' ? '待结算' : '处理中';
     }
-    return record.type === 'income' ? '已到账' : '已到账';
+    return '已到账';
+  };
+
+  const getRecordTitle = (record: IncomeRecord) => {
+    if (record.type === 'withdraw') {
+      const method = record.withdrawMethod === 'alipay' ? '支付宝' : '微信钱包';
+      return `提现到${method}`;
+    }
+    return `${record.petName}寄养费`;
   };
 
   const getDailyTotal = (records: IncomeRecord[]) => {
@@ -119,29 +127,49 @@ const BillListPage: React.FC = () => {
                 </Text>
               </View>
 
-              {records.map((record) => (
-                <View
-                  key={record.id}
-                  className={styles.billItem}
-                  onClick={() => handleItemClick(record)}
-                >
-                  <View className={classnames(styles.icon, record.type)}>
-                    {record.type === 'income' ? '🐾' : '💸'}
+              {records.map((record) => {
+                const isWithdraw = record.type === 'withdraw';
+                return (
+                  <View
+                    key={record.id}
+                    className={styles.billItem}
+                    onClick={() => handleItemClick(record)}
+                  >
+                    <View
+                      className={classnames(styles.itemIcon, {
+                        [styles.incomeIcon]: !isWithdraw,
+                        [styles.withdrawIcon]: isWithdraw
+                      })}
+                    >
+                      {record.type === 'income' ? '🐾' : '💸'}
+                    </View>
+                    <View className={styles.info}>
+                      <Text className={styles.itemTitle}>{getRecordTitle(record)}</Text>
+                      <Text className={styles.subInfo}>{record.orderNo} · {record.createTime.split(' ')[1]}</Text>
+                    </View>
+                    <View className={styles.right}>
+                      <Text
+                        className={classnames(styles.itemAmount, {
+                          [styles.incomeAmount]: !isWithdraw,
+                          [styles.withdrawAmount]: isWithdraw,
+                          [styles.pendingAmount]: record.status === 'pending'
+                        })}
+                      >
+                        {record.type === 'income' ? '+' : '-'}{formatMoney(record.amount)}
+                      </Text>
+                      <Text
+                        className={classnames(styles.status, {
+                          [styles.statusCompleted]: record.status === 'completed',
+                          [styles.statusIncomePending]: !isWithdraw && record.status === 'pending',
+                          [styles.statusWithdrawPending]: isWithdraw && record.status === 'pending'
+                        })}
+                      >
+                        {getStatusText(record)}
+                      </Text>
+                    </View>
                   </View>
-                  <View className={styles.info}>
-                    <Text className={styles.title}>{record.petName}</Text>
-                    <Text className={styles.subInfo}>{record.orderNo} · {record.createTime.split(' ')[1]}</Text>
-                  </View>
-                  <View className={styles.right}>
-                    <Text className={classnames(styles.amount, record.type)}>
-                      {record.type === 'income' ? '+' : '-'}{formatMoney(record.amount)}
-                    </Text>
-                    <Text className={classnames(styles.status, record.status)}>
-                      {getStatusText(record)}
-                    </Text>
-                  </View>
-                </View>
-              ))}
+                );
+              })}
             </View>
           );
         })

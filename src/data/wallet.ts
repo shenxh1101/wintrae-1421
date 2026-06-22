@@ -3,6 +3,7 @@ import type { Wallet, IncomeRecord, Review, SitterSetting, PaymentAccount } from
 export const mockWallet: Wallet = {
   balance: 1280.5,
   pendingAmount: 540,
+  withdrawPending: 0,
   totalIncome: 8620,
   monthIncome: 2340
 };

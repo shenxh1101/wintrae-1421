@@ -76,32 +76,58 @@ const RecordsPage: React.FC = () => {
     const hasImages = record.images && record.images.length > 0;
     const hasVideos = record.videos && record.videos.length > 0;
     const hasMedia = hasImages || hasVideos;
-    
+
     const mediaInfo = hasMedia
       ? `\n\n📷 照片: ${record.images?.length || 0}张 | 🎬 视频: ${record.videos?.length || 0}个`
       : '';
 
-    const hasOnlyVideos = !hasImages && hasVideos;
-    const confirmText = hasOnlyVideos ? '查看视频' : (hasImages ? '查看照片' : '知道了');
+    const showMediaOptions = () => {
+      const options: string[] = [];
+      if (hasImages) options.push('查看照片');
+      if (hasVideos) options.push('查看视频');
+      if (options.length === 0) return;
 
-    Taro.showModal({
-      title: record.title,
-      content: `${record.time}\n\n${record.content}${record.abnormalDesc ? '\n\n⚠️ 异常：' + record.abnormalDesc : ''}${mediaInfo}`,
-      confirmText,
-      cancelText: '关闭',
-      showCancel: hasMedia,
-      success: (res) => {
-        if (res.confirm) {
-          if (hasOnlyVideos && record.videos) {
-            Taro.navigateTo({
-              url: `/pages/video-preview/index?recordId=${record.id}&videoIndex=0`
-            });
-          } else if (hasImages && record.images) {
+      if (options.length === 1) {
+        if (hasImages && record.images) {
+          Taro.previewImage({
+            current: record.images[0],
+            urls: record.images
+          });
+        } else if (hasVideos && record.videos) {
+          Taro.navigateTo({
+            url: `/pages/video-preview/index?recordId=${record.id}&videoIndex=0`
+          });
+        }
+        return;
+      }
+
+      Taro.showActionSheet({
+        itemList: options,
+        success: (res) => {
+          const choice = options[res.tapIndex];
+          if (choice === '查看照片' && record.images) {
             Taro.previewImage({
               current: record.images[0],
               urls: record.images
             });
+          } else if (choice === '查看视频' && record.videos) {
+            Taro.navigateTo({
+              url: `/pages/video-preview/index?recordId=${record.id}&videoIndex=0`
+            });
           }
+        }
+      });
+    };
+
+    Taro.showModal({
+      title: record.title,
+      content: `${record.time}\n\n${record.content}${record.abnormalDesc ? '\n\n⚠️ 异常：' + record.abnormalDesc : ''}${mediaInfo}`,
+      confirmText: hasMedia ? '查看内容' : '知道了',
+      cancelText: '关闭',
+      showCancel: hasMedia,
+      success: (res) => {
+        if (res.confirm && hasMedia) {
+          showMediaOptions();
         }
       }
     });

@@ -98,14 +98,12 @@ const WithdrawPage: React.FC = () => {
     Taro.showLoading({ title: '提交中...' });
 
     setTimeout(() => {
-      setWallet((prev) => ({
-        ...prev,
-        balance: prev.balance - num,
-        pendingAmount: prev.pendingAmount + num
-      }));
+      const withdrawId = 'withdraw_' + Date.now();
+      setLastWithdrawId(withdrawId);
 
       addIncomeRecord({
-        orderId: 'withdraw_' + Date.now(),
+        id: withdrawId,
+        orderId: withdrawId,
         orderNo: 'TX' + dayjs().format('YYYYMMDDHHmmss'),
         petName: '提现到' + (selectedMethod === 'wechat' ? '微信' : '支付宝'),
         amount: num,
@@ -114,7 +112,7 @@ const WithdrawPage: React.FC = () => {
         createTime: dayjs().format('YYYY-MM-DD HH:mm'),
         withdrawMethod: selectedMethod,
         withdrawAccount: defaultAccount?.name + ' (' + defaultAccount?.account + ')'
-      });
+      } as any);
 
       Taro.hideLoading();
       setShowSuccess(true);
@@ -125,6 +123,17 @@ const WithdrawPage: React.FC = () => {
   const handleSuccessClose = () => {
     setShowSuccess(false);
     Taro.navigateBack();
+  };
+
+  const [lastWithdrawId, setLastWithdrawId] = useState<string>('');
+
+  const handleViewBill = () => {
+    if (lastWithdrawId) {
+      setShowSuccess(false);
+      setTimeout(() => {
+        Taro.navigateTo({ url: `/pages/bill-detail/index?id=${lastWithdrawId}` });
+      }, 50);
+    }
   };
 
   return (
@@ -277,14 +286,22 @@ const WithdrawPage: React.FC = () => {
           <View className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
             <Text className={styles.icon}>✅</Text>
             <Text className={styles.title}>提现申请已提交</Text>
-            <Text className={styles.amount}>¥{actualAmount.toFixed(2)}</Text>
+            <Text className={styles.successAmount}>-¥{actualAmount.toFixed(2)}</Text>
             <Text className={styles.desc}>
               预计明天24:00前到账您的
               {selectedMethod === 'wechat' ? '微信钱包' : '支付宝'}账户
             </Text>
-            <Button className={styles.btn} onClick={handleSuccessClose}>
-              完成
-            </Button>
+            <View className={styles.successBtns}>
+              <Button
+                className={classnames(styles.btn, styles.btnOutline)}
+                onClick={handleViewBill}
+              >
+                查看账单
+              </Button>
+              <Button className={styles.btn} onClick={handleSuccessClose}>
+                完成
+              </Button>
+            </View>
           </View>
         </View>
       )}

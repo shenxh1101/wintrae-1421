@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, Button, ScrollView } from '@tarojs/components';
-import Taro from '@tarojs/taro';
+import Taro, { useDidShow } from '@tarojs/taro';
 import styles from './index.module.scss';
 import { useAppContext } from '@/store';
 import type { IncomeRecord, Review } from '@/types';
 import classnames from 'classnames';
 
 const tabOptions = [
-  { key: 'income', label: '收入明细' },
+  { key: 'income', label: '收支明细' },
   { key: 'reviews', label: '评价管理' }
 ];
 
@@ -22,9 +22,19 @@ const WalletPage: React.FC = () => {
   const { wallet, incomeRecords, reviews, monthlyIncome } = useAppContext();
   const [activeTab, setActiveTab] = useState('income');
 
-  useEffect(() => {
-    console.log('[Wallet] 钱包页面加载');
-  }, []);
+  useDidShow(() => {
+    console.log('[Wallet] 页面显示，刷新数据');
+  });
+
+  const stats = useMemo(() => {
+    const incomePending = incomeRecords
+      .filter((r) => r.type === 'income' && r.status === 'pending')
+      .reduce((sum, r) => sum + r.amount, 0);
+    const withdrawProcessing = incomeRecords
+      .filter((r) => r.type === 'withdraw' && r.status === 'pending')
+      .reduce((sum, r) => sum + r.amount, 0);
+    return { incomePending, withdrawProcessing };
+  }, [incomeRecords]);
 
   const maxIncome = Math.max(...monthlyIncome.map((item) => item.income));
 
@@ -64,18 +74,58 @@ const WalletPage: React.FC = () => {
   };
 
   const handlePendingClick = () => {
-    console.log('[Wallet] 查看待收款');
-    const pending = incomeRecords.find((r) => r.status === 'pending');
+    console.log('[Wallet] 查看寄养待收款');
+    const pending = incomeRecords.find((r) => r.type === 'income' && r.status === 'pending');
     if (pending) {
       Taro.navigateTo({ url: `/pages/bill-detail/index?id=${pending.id}` });
     } else {
-      Taro.showToast({ title: '暂无待收款', icon: 'none' });
+      Taro.showToast({ title: '暂无寄养待收款', icon: 'none' });
+    }
+  };
+
+  const handleWithdrawPendingClick = () => {
+    console.log('[Wallet] 查看提现处理中');
+    const pending = incomeRecords.find((r) => r.type === 'withdraw' && r.status === 'pending');
+    if (pending) {
+      Taro.navigateTo({ url: `/pages/bill-detail/index?id=${pending.id}` });
+    } else {
+      Taro.showToast({ title: '暂无提现处理中', icon: 'none' });
     }
   };
 
   const renderStars = (rating: number) => {
     return '★'.repeat(rating) + '☆'.repeat(5 - rating);
   };
+
+  const getRecordIcon = (record: IncomeRecord) => {
+    if (record.type === 'withdraw') return '💸';
+    return '🐾';
+  };
+
+  const getRecordTitle = (record: IncomeRecord) => {
+    if (record.type === 'withdraw') {
+      const method = record.withdrawMethod === 'alipay' ? '支付宝' : '微信钱包';
+      return `提现到${method}`;
+    }
+    return `${record.petName}寄养费`;
+  };
+
+  const getStatusText = (record: IncomeRecord) => {
+    if (record.type === 'withdraw') {
+      return record.status === 'completed' ? '已到账' : '处理中';
+    }
+    return record.status === 'completed' ? '已到账' : '待结算';
+  };
+
+  const getAmountPrefix = (record: IncomeRecord) => {
+    return record.type === 'income' ? '+' : '-';
+  };
+
+  const sortedRecords = useMemo(() => {
+    return [...incomeRecords].sort(
+      (a, b) => new Date(b.createTime).getTime() - new Date(a.createTime).getTime()
+    );
+  }, [incomeRecords]);
 
   return (
     <View className={styles.page}>
@@ -90,8 +140,12 @@ const WalletPage: React.FC = () => {
         </View>
         <View className={styles.statsRow}>
           <View className={styles.statItem} onClick={handlePendingClick}>
-            <Text className={styles.label}>待收款</Text>
-            <Text className={styles.value}>¥{wallet.pendingAmount.toFixed(2)}</Text>
+            <Text className={styles.label}>寄养待收款</Text>
+            <Text className={styles.value}>¥{stats.incomePending.toFixed(2)}</Text>
+          </View>
+          <View className={styles.statItem} onClick={handleWithdrawPendingClick}>
+            <Text className={styles.label}>提现处理中</Text>
+            <Text className={styles.value}>¥{stats.withdrawProcessing.toFixed(2)}</Text>
           </View>
           <View className={styles.statItem}>
             <Text className={styles.label}>本月收入</Text>
@@ -113,7 +167,7 @@ const WalletPage: React.FC = () => {
         <View className={styles.actionCard} onClick={() => handleFeatureClick('bill')}>
           <Text className={styles.icon}>📋</Text>
           <Text className={styles.title}>查看账单</Text>
-          <Text className={styles.subText}>收支明细</Text>
+          <Text className={styles.subText}>全部收支明细</Text>
         </View>
       </View>
 
@@ -171,37 +225,53 @@ const WalletPage: React.FC = () => {
         <ScrollView scrollY style={{ height: '480rpx' }}>
           {activeTab === 'income' ? (
             <View className={styles.incomeList}>
-              {incomeRecords.length > 0 ? (
-                incomeRecords.map((record) => (
+              {sortedRecords.length > 0 ? (
+                sortedRecords.map((record) => (
                   <View
                     key={record.id}
                     className={styles.incomeItem}
                     onClick={() => handleIncomeClick(record)}
                   >
-                    <View className={styles.icon}>💰</View>
+                    <View
+                      className={classnames(styles.itemIcon, {
+                        [styles.incomeIcon]: record.type === 'income',
+                        [styles.withdrawIcon]: record.type === 'withdraw'
+                      })}
+                    >
+                      {getRecordIcon(record)}
+                    </View>
                     <View className={styles.info}>
-                      <Text className={styles.title}>{record.petName}寄养费</Text>
+                      <Text className={styles.itemTitle}>{getRecordTitle(record)}</Text>
                       <Text className={styles.orderNo}>{record.orderNo}</Text>
                       <Text className={styles.time}>{record.createTime}</Text>
                     </View>
                     <View style={{ textAlign: 'right' }}>
                       <Text
-                        className={classnames(styles.amount, {
-                          [styles.pending]: record.status === 'pending'
+                        className={classnames(styles.itemAmount, {
+                          [styles.incomeAmount]: record.type === 'income',
+                          [styles.withdrawAmount]: record.type === 'withdraw',
+                          [styles.pendingAmount]: record.status === 'pending'
                         })}
                       >
-                        +¥{record.amount.toFixed(2)}
+                        {getAmountPrefix(record)}¥{record.amount.toFixed(2)}
                       </Text>
-                      <Text className={styles.status}>
-                        {record.status === 'completed' ? '已到账' : '待结算'}
+                      <Text
+                        className={classnames(styles.status, {
+                          [styles.statusCompleted]: record.status === 'completed',
+                          [styles.statusPending]: record.status === 'pending',
+                          [styles.statusIncome]: record.type === 'income' && record.status === 'pending',
+                          [styles.statusWithdraw]: record.type === 'withdraw' && record.status === 'pending'
+                        })}
+                      >
+                        {getStatusText(record)}
                       </Text>
                     </View>
                   </View>
                 ))
               ) : (
                 <View className={styles.empty}>
-                  <Text className={styles.icon}>💵</Text>
-                  <Text className={styles.text}>暂无收入记录</Text>
+                  <Text className={styles.emptyIcon}>💵</Text>
+                  <Text className={styles.emptyText}>暂无收支记录</Text>
                 </View>
               )}
             </View>
@@ -211,7 +281,7 @@ const WalletPage: React.FC = () => {
                 reviews.map((review) => (
                   <View key={review.id} className={styles.reviewItem}>
                     <View className={styles.reviewHeader}>
-                      <View className={styles.left}>
+                      <View className={styles.reviewLeft}>
                         <Text className={styles.petName}>{review.petName}</Text>
                         <Text className={styles.owner}>({review.ownerName})</Text>
                       </View>
@@ -219,7 +289,7 @@ const WalletPage: React.FC = () => {
                         {renderStars(review.rating)}
                       </Text>
                     </View>
-                    <Text className={styles.content}>{review.content}</Text>
+                    <Text className={styles.reviewContent}>{review.content}</Text>
                     {review.reply ? (
                       <View
                         className={styles.reply}
@@ -236,13 +306,13 @@ const WalletPage: React.FC = () => {
                         回复评价
                       </Button>
                     )}
-                    <Text className={styles.time}>{review.createTime}</Text>
+                    <Text className={styles.reviewTime}>{review.createTime}</Text>
                   </View>
                 ))
               ) : (
                 <View className={styles.empty}>
-                  <Text className={styles.icon}>⭐</Text>
-                  <Text className={styles.text}>暂无评价</Text>
+                  <Text className={styles.emptyIcon}>⭐</Text>
+                  <Text className={styles.emptyText}>暂无评价</Text>
                 </View>
               )}
             </View>

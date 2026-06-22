@@ -5,15 +5,43 @@
   background: $color-bg-page;
 }
 
+.summaryCard {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  margin: $spacing-md $page-padding;
+  padding: $spacing-xl $spacing-lg;
+  border-radius: $radius-lg;
+  color: $color-text-white;
+  display: flex;
+  gap: $spacing-lg;
+
+  .stat {
+    flex: 1;
+    text-align: center;
+
+    .label {
+      font-size: $font-size-sm;
+      opacity: 0.9;
+      margin-bottom: $spacing-xs;
+    }
+
+    .value {
+      font-size: $font-size-xl;
+      font-weight: $font-weight-bold;
+    }
+  }
+}
+
 .filterTabs {
   display: flex;
   background: $color-bg-card;
-  padding: $spacing-md $spacing-lg;
+  padding: $spacing-md;
+  margin: 0 $page-padding;
   gap: $spacing-sm;
   position: sticky;
   top: 0;
   z-index: 10;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
 
   .tab {
     @include button-reset;
@@ -38,32 +66,35 @@
 }
 
 .dateGroup {
-  padding: $spacing-lg $spacing-lg 0;
+  padding: $spacing-md $page-padding 0;
 
   .dateHeader {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: $spacing-md;
+    margin: $spacing-md 0;
 
     .date {
       font-size: $font-size-sm;
       color: $color-text-tertiary;
+      font-weight: $font-weight-medium;
     }
 
     .total {
       font-size: $font-size-sm;
       color: $color-text-secondary;
+      display: flex;
+      gap: $spacing-sm;
     }
   }
 
   .incomeAmount {
-    color: $color-primary;
+    color: $color-success;
     font-weight: $font-weight-medium;
   }
 
   .withdrawAmount {
-    color: $color-error;
+    color: $color-danger;
     font-weight: $font-weight-medium;
   }
 }
@@ -76,117 +107,103 @@
   box-shadow: $shadow-card;
   display: flex;
   align-items: center;
+  gap: $spacing-md;
   transition: all $transition-base;
 
   &:active {
     transform: scale(0.98);
-    box-shadow: $shadow-card-hover;
   }
 
-  .icon {
-    width: 72rpx;
-    height: 72rpx;
-    border-radius: 50%;
+  .itemIcon {
+    width: 80rpx;
+    height: 80rpx;
+    border-radius: $radius-round;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: $font-size-lg;
-    margin-right: $spacing-md;
+    font-size: 36rpx;
+    flex-shrink: 0;
+  }
 
-    &.income {
-      background: $color-primary-bg;
-    }
+  .incomeIcon {
+    background: $color-success-light;
+  }
 
-    &.withdraw {
-      background: $color-error-light;
-    }
+  .withdrawIcon {
+    background: $color-danger-light;
   }
 
   .info {
     flex: 1;
+    min-width: 0;
 
-    .title {
+    .itemTitle {
       font-size: $font-size-md;
       font-weight: $font-weight-medium;
       color: $color-text-primary;
-      margin-bottom: $spacing-xs;
+      margin-bottom: 8rpx;
     }
 
     .subInfo {
-      font-size: $font-size-sm;
+      font-size: $font-size-xs;
       color: $color-text-tertiary;
     }
   }
 
   .right {
     text-align: right;
+    flex-shrink: 0;
 
-    .amount {
+    .itemAmount {
       font-size: $font-size-lg;
       font-weight: $font-weight-semibold;
-      margin-bottom: $spacing-xs;
+      margin-bottom: 8rpx;
+    }
 
-      &.income {
-        color: $color-primary;
-      }
+    .incomeAmount {
+      color: $color-success;
+    }
 
-      &.withdraw {
-        color: $color-error;
-      }
+    .withdrawAmount {
+      color: $color-danger;
+    }
+
+    .pendingAmount {
+      opacity: 0.85;
     }
 
     .status {
       font-size: $font-size-xs;
-      color: $color-text-tertiary;
+    }
 
-      &.pending {
-        color: $color-warning;
-      }
+    .statusCompleted {
+      color: $color-success;
+    }
 
-      &.completed {
-        color: $color-success;
-      }
+    .statusIncomePending {
+      color: $color-warning;
+    }
+
+    .statusWithdrawPending {
+      color: #8b5cf6;
     }
   }
 }
 
 .empty {
-  padding: $spacing-xxl 0;
-  text-align: center;
+  padding: 120rpx 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-md;
 
   .icon {
-    font-size: 96rpx;
-    margin-bottom: $spacing-md;
-    display: block;
+    font-size: 120rpx;
+    opacity: 0.3;
   }
 
   .text {
     font-size: $font-size-md;
     color: $color-text-tertiary;
-  }
-}
-
-.summaryCard {
-  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
-  margin: $spacing-lg;
-  padding: $spacing-xl;
-  border-radius: $radius-lg;
-  color: $color-text-white;
-  display: flex;
-  justify-content: space-around;
-
-  .stat {
-    text-align: center;
-
-    .label {
-      font-size: $font-size-sm;
-      opacity: 0.9;
-      margin-bottom: $spacing-xs;
-    }
-
-    .value {
-      font-size: $font-size-xl;
-      font-weight: $font-weight-bold;
-    }
   }
 }

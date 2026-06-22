@@ -35,7 +35,8 @@ interface AppContextType extends AppState {
   addRecord: (record: Omit<CareRecord, 'id'>) => void;
   addReviewReply: (reviewId: string, reply: string) => void;
   updatePetRemark: (petId: string, remark: string) => void;
-  addIncomeRecord: (record: Omit<IncomeRecord, 'id'>) => void;
+  addIncomeRecord: (record: Omit<IncomeRecord, 'id'> & { id?: string }) => void;
+  updateIncomeRecord: (recordId: string, updates: Partial<IncomeRecord>) => void;
   setPaymentPassword: (password: string) => boolean;
   verifyPaymentPassword: (password: string) => boolean;
   addPaymentAccount: (account: Omit<PaymentAccount, 'id'>) => void;
@@ -73,6 +74,49 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [paymentPassword, setPaymentPasswordState] = useState<PaymentPasswordState>(mockPasswordState);
   const [loaded, setLoaded] = useState(false);
 
+  const hashPassword = (pwd: string): string => {
+    let hash = 0;
+    for (let i = 0; i < pwd.length; i++) {
+      const char = pwd.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash;
+    }
+    return hash.toString(36);
+  };
+
+  const recalcWallet = (records: IncomeRecord[], currentWallet: Wallet): Wallet => {
+    const currentMonth = new Date().toISOString().slice(0, 7);
+    let balance = currentWallet.balance;
+    let pendingAmount = 0;
+    let withdrawPending = 0;
+    let totalIncome = 0;
+    let monthIncome = 0;
+
+    records.forEach((r) => {
+      if (r.type === 'income') {
+        totalIncome += r.amount;
+        if (r.createTime.startsWith(currentMonth)) {
+          monthIncome += r.amount;
+        }
+        if (r.status === 'pending') {
+          pendingAmount += r.amount;
+        }
+      } else if (r.type === 'withdraw') {
+        if (r.status === 'pending') {
+          withdrawPending += r.amount;
+        }
+      }
+    });
+
+    return {
+      balance: Number(balance.toFixed(2)),
+      pendingAmount: Number(pendingAmount.toFixed(2)),
+      withdrawPending: Number(withdrawPending.toFixed(2)),
+      totalIncome: Number(totalIncome.toFixed(2)),
+      monthIncome: Number(monthIncome.toFixed(2))
+    };
+  };
+
   useEffect(() => {
     loadFromStorage();
   }, []);
@@ -105,6 +149,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       setLoaded(true);
     }
   };
+
+  useEffect(() => {
+    if (loaded) {
+      setWallet((prev) => recalcWallet(incomeRecords, prev));
+    }
+  }, [loaded, incomeRecords]);
 
   const saveToStorage = async () => {
     try {
@@ -148,16 +198,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         }
       }
     });
-  };
-
-  const hashPassword = (pwd: string): string => {
-    let hash = 0;
-    for (let i = 0; i < pwd.length; i++) {
-      const char = pwd.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash;
-    }
-    return hash.toString(36);
   };
 
   const setPaymentPassword = async (password: string): Promise<boolean> => {
@@ -289,10 +329,31 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     updatePet(petId, { remark });
   };
 
-  const addIncomeRecord = (record: Omit<IncomeRecord, 'id'>) => {
-    console.log('[Store] Add income record:', record.orderNo);
-    const newRecord: IncomeRecord = { ...record, id: generateId() };
-    setIncomeRecords((prev) => [newRecord, ...prev]);
+  const addIncomeRecord = (record: Omit<IncomeRecord, 'id'> & { id?: string }) => {
+    console.log('[Store] Add income record:', record.orderNo, record.type);
+    const newRecord: IncomeRecord = { ...record, id: record.id || generateId() } as IncomeRecord;
+    setIncomeRecords((prev) => {
+      const next = [newRecord, ...prev];
+      setWallet((prevWallet) => {
+        let nextWallet = { ...prevWallet };
+        if (newRecord.type === 'income' && newRecord.status === 'completed') {
+          nextWallet.balance = Number((prevWallet.balance + newRecord.amount).toFixed(2));
+        } else if (newRecord.type === 'withdraw') {
+          nextWallet.balance = Number((prevWallet.balance - newRecord.amount).toFixed(2));
+        }
+        return recalcWallet(next, nextWallet);
+      });
+      return next;
+    });
+  };
+
+  const updateIncomeRecord = (recordId: string, updates: Partial<IncomeRecord>) => {
+    console.log('[Store] Update income record:', recordId, updates);
+    setIncomeRecords((prev) => {
+      const next = prev.map((r) => (r.id === recordId ? { ...r, ...updates } : r));
+      setWallet((prevWallet) => recalcWallet(next, prevWallet));
+      return next;
+    });
   };
 
   return (
@@ -318,6 +379,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         addReviewReply,
         updatePetRemark,
         addIncomeRecord,
+        updateIncomeRecord,
         setPaymentPassword,
         verifyPaymentPassword,
         addPaymentAccount,

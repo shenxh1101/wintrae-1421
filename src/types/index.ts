@@ -52,6 +52,9 @@ export interface Order {
   status: OrderStatus;
   deposit: number;
   createTime: string;
+  acceptTime?: string;
+  extraFee?: number;
+  coupon?: number;
   remark?: string;
   handoverItems?: string[];
   cancelRule?: string;
@@ -90,6 +93,7 @@ export interface SitterSetting {
 export interface Wallet {
   balance: number;
   pendingAmount: number;
+  withdrawPending: number;
   totalIncome: number;
   monthIncome: number;
 }

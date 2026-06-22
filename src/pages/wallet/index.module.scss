@@ -40,12 +40,16 @@
   .statsRow {
     display: flex;
     margin-top: $spacing-xl;
-    gap: $spacing-xl;
+    gap: $spacing-md;
+    flex-wrap: wrap;
 
     .statItem {
+      flex: 1;
+      min-width: calc(50% - #{$spacing-md});
+
       .label {
         font-size: $font-size-xs;
-        opacity: 0.8;
+        opacity: 0.85;
       }
 
       .value {
@@ -210,12 +214,16 @@
     align-items: center;
     gap: $spacing-md;
     box-shadow: $shadow-card;
+    transition: all $transition-base;
 
-    .icon {
+    &:active {
+      transform: scale(0.98);
+    }
+
+    .itemIcon {
       width: 80rpx;
       height: 80rpx;
       border-radius: $radius-round;
-      background: $color-success-light;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -223,11 +231,19 @@
       flex-shrink: 0;
     }
 
+    .incomeIcon {
+      background: $color-success-light;
+    }
+
+    .withdrawIcon {
+      background: $color-danger-light;
+    }
+
     .info {
       flex: 1;
       min-width: 0;
 
-      .title {
+      .itemTitle {
         font-size: $font-size-md;
         color: $color-text-primary;
         font-weight: $font-weight-medium;
@@ -246,22 +262,44 @@
       }
     }
 
-    .amount {
+    .itemAmount {
       font-size: $font-size-lg;
       font-weight: $font-weight-semibold;
-      color: $color-success;
       flex-shrink: 0;
+    }
 
-      &.pending {
-        color: $color-warning;
-      }
+    .incomeAmount {
+      color: $color-success;
+    }
+
+    .withdrawAmount {
+      color: $color-danger;
+    }
+
+    .pendingAmount {
+      opacity: 0.85;
     }
 
     .status {
       font-size: $font-size-xs;
-      color: $color-text-tertiary;
       margin-top: 4rpx;
       text-align: right;
+    }
+
+    .statusCompleted {
+      color: $color-success;
+    }
+
+    .statusPending {
+      color: $color-warning;
+    }
+
+    .statusIncome {
+      color: $color-warning;
+    }
+
+    .statusWithdraw {
+      color: #8b5cf6;
     }
   }
 }
@@ -283,7 +321,7 @@
       justify-content: space-between;
       margin-bottom: $spacing-md;
 
-      .left {
+      .reviewLeft {
         display: flex;
         align-items: center;
         gap: $spacing-sm;
@@ -306,7 +344,7 @@
       }
     }
 
-    .content {
+    .reviewContent {
       font-size: $font-size-sm;
       color: $color-text-secondary;
       line-height: $line-height-loose;
@@ -333,7 +371,7 @@
       }
     }
 
-    .time {
+    .reviewTime {
       font-size: $font-size-xs;
       color: $color-text-tertiary;
       margin-top: $spacing-sm;
@@ -365,12 +403,12 @@
   padding: 80rpx 0;
   gap: $spacing-md;
 
-  .icon {
+  .emptyIcon {
     font-size: 100rpx;
     opacity: 0.3;
   }
 
-  .text {
+  .emptyText {
     font-size: $font-size-sm;
     color: $color-text-tertiary;
   }
@@ -398,14 +436,7 @@
     }
 
     .icon {
-      width: 80rpx;
-      height: 80rpx;
-      border-radius: $radius-lg;
-      background: $color-primary-bg;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 36rpx;
+      font-size: 40rpx;
     }
 
     .label {

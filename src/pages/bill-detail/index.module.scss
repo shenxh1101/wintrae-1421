@@ -3,6 +3,7 @@
 .page {
   min-height: 100vh;
   background: $color-bg-page;
+  padding-bottom: 40rpx;
 }
 
 .amountHeader {
@@ -32,13 +33,28 @@
     }
   }
 
-  .status {
+  .statusTag {
     display: inline-block;
     margin-top: $spacing-md;
     padding: 8rpx 28rpx;
-    background: rgba(255, 255, 255, 0.2);
     border-radius: $radius-button;
     font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+  }
+
+  .pendingTag {
+    background: rgba(255, 152, 0, 0.25);
+    border: 1rpx solid rgba(255, 152, 0, 0.5);
+  }
+
+  .completedTag {
+    background: rgba(76, 175, 80, 0.25);
+    border: 1rpx solid rgba(76, 175, 80, 0.5);
+  }
+
+  .withdrawPendingTag {
+    background: rgba(139, 92, 246, 0.25);
+    border: 1rpx solid rgba(139, 92, 246, 0.5);
   }
 }
 
@@ -48,92 +64,335 @@
   border-radius: $radius-lg;
   padding: $spacing-lg;
   box-shadow: $shadow-card;
-  margin-top: -48rpx;
-  position: relative;
-  z-index: 2;
 
-  .sectionTitle {
-    font-size: $font-size-md;
-    font-weight: $font-weight-semibold;
-    color: $color-text-primary;
-    margin-bottom: $spacing-lg;
+  &:first-of-type {
+    margin-top: -48rpx;
+    position: relative;
+    z-index: 2;
+  }
+
+  .sectionHeader {
     display: flex;
     align-items: center;
-    gap: $spacing-sm;
+    margin-bottom: $spacing-lg;
 
-    .icon {
+    .sectionIcon {
       font-size: $font-size-lg;
+      margin-right: $spacing-sm;
+    }
+
+    .sectionTitle {
+      flex: 1;
+      font-size: $font-size-md;
+      font-weight: $font-weight-semibold;
+      color: $color-text-primary;
+    }
+
+    .sectionAction {
+      font-size: $font-size-xs;
+      color: $color-primary;
+      font-weight: $font-weight-medium;
     }
   }
 }
 
-.infoRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: $spacing-md 0;
-  border-bottom: 1rpx solid $color-divider;
-
-  &:last-child {
-    border-bottom: none;
-  }
-
-  .label {
-    font-size: $font-size-sm;
-    color: $color-text-secondary;
-  }
-
-  .value {
-    font-size: $font-size-sm;
-    color: $color-text-primary;
-  }
-}
-
-.petInfo {
+.petCard {
   display: flex;
   align-items: center;
   gap: $spacing-md;
+  background: $color-bg-page;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  transition: all $transition-base;
 
-  .avatar {
+  &:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+  }
+
+  .petAvatar {
+    width: 96rpx;
+    height: 96rpx;
+    border-radius: $radius-round;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .petInfo {
+    flex: 1;
+    min-width: 0;
+
+    .petRow {
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+      margin-bottom: 8rpx;
+    }
+
+    .petName {
+      font-size: $font-size-md;
+      font-weight: $font-weight-semibold;
+      color: $color-text-primary;
+    }
+
+    .petBadge {
+      font-size: 20rpx;
+      color: $color-primary;
+      background: $color-primary-bg;
+      padding: 4rpx 12rpx;
+      border-radius: $radius-xs;
+    }
+
+    .petDates {
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
+    }
+  }
+
+  .petAmount {
+    font-size: $font-size-lg;
+    color: $color-price;
+    font-weight: $font-weight-semibold;
+    flex-shrink: 0;
+  }
+}
+
+.accountCard {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  background: $color-bg-page;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  margin-bottom: $spacing-md;
+
+  .accountIcon {
     width: 80rpx;
     height: 80rpx;
     border-radius: $radius-round;
-    object-fit: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36rpx;
+    flex-shrink: 0;
   }
 
-  .info {
-    flex: 1;
+  .wechatIcon {
+    background: #e8f8ef;
+  }
 
-    .name {
+  .alipayIcon {
+    background: #e6f2ff;
+  }
+
+  .accountInfo {
+    flex: 1;
+    min-width: 0;
+
+    .accountName {
       font-size: $font-size-md;
+      font-weight: $font-weight-semibold;
       color: $color-text-primary;
-      font-weight: $font-weight-medium;
     }
 
-    .dates {
+    .accountNo {
       font-size: $font-size-xs;
       color: $color-text-tertiary;
       margin-top: 4rpx;
     }
   }
+}
 
-  .amount {
-    font-size: $font-size-lg;
-    color: $color-price;
-    font-weight: $font-weight-semibold;
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-sm;
+
+  .infoCell {
+    background: $color-bg-page;
+    border-radius: $radius-sm;
+    padding: $spacing-sm $spacing-md;
+
+    .infoLabel {
+      font-size: 22rpx;
+      color: $color-text-tertiary;
+      margin-bottom: 4rpx;
+    }
+
+    .infoValue {
+      font-size: $font-size-sm;
+      color: $color-text-primary;
+      font-weight: $font-weight-medium;
+    }
+  }
+}
+
+.feeBreakdown {
+  background: $color-bg-page;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+
+  .feeRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-sm 0;
+
+    .feeLabel {
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+    }
+
+    .feeValue {
+      font-size: $font-size-sm;
+      color: $color-text-primary;
+      font-weight: $font-weight-medium;
+
+      &.negative {
+        color: $color-success;
+      }
+    }
+  }
+
+  .feeDivider {
+    height: 1rpx;
+    background: $color-divider;
+    margin: $spacing-sm 0;
+  }
+
+  .feeTotal {
+    padding-top: $spacing-md;
+    margin-top: $spacing-sm;
+
+    .feeLabel {
+      font-weight: $font-weight-semibold;
+      color: $color-text-primary;
+      font-size: $font-size-md;
+    }
+
+    .feeTotalValue {
+      font-size: $font-size-lg;
+      color: $color-price;
+      font-weight: $font-weight-bold;
+    }
+  }
+}
+
+.timeline {
+  padding-left: $spacing-sm;
+
+  .timelineItem {
+    display: flex;
+    gap: $spacing-md;
+    padding-bottom: $spacing-lg;
+
+    &:last-child {
+      padding-bottom: 0;
+    }
+  }
+
+  .timelineLeft {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 32rpx;
+    flex-shrink: 0;
+
+    .timelineDot {
+      width: 20rpx;
+      height: 20rpx;
+      border-radius: $radius-round;
+      flex-shrink: 0;
+      margin-top: 4rpx;
+    }
+
+    .dotDone {
+      background: $color-success;
+    }
+
+    .dotCurrent {
+      background: $color-primary;
+      box-shadow: 0 0 0 6rpx rgba(255, 138, 89, 0.15);
+    }
+
+    .dotWait {
+      background: $color-border;
+    }
+
+    .dotWithdraw {
+      background: #8b5cf6;
+
+      &.dotCurrent {
+        box-shadow: 0 0 0 6rpx rgba(139, 92, 246, 0.15);
+      }
+    }
+
+    .timelineLine {
+      width: 2rpx;
+      flex: 1;
+      margin: 8rpx 0 0;
+      min-height: 32rpx;
+    }
+
+    .lineDone {
+      background: $color-success;
+      opacity: 0.3;
+    }
+
+    .lineWait {
+      background: $color-border;
+    }
+
+    .lineWithdraw {
+      background: #8b5cf6;
+      opacity: 0.3;
+    }
+  }
+
+  .timelineContent {
+    flex: 1;
+    padding-bottom: $spacing-xs;
+
+    .timelineHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6rpx;
+    }
+
+    .timelineTitle {
+      font-size: $font-size-sm;
+      font-weight: $font-weight-semibold;
+      color: $color-text-primary;
+    }
+
+    .titleCurrent {
+      color: $color-primary;
+    }
+
+    .timelineTime {
+      font-size: 22rpx;
+      color: $color-text-tertiary;
+    }
+
+    .timelineDesc {
+      font-size: $font-size-xs;
+      color: $color-text-secondary;
+      line-height: 1.6;
+    }
   }
 }
 
 .actionBtn {
   @include button-reset;
-  width: 100%;
+  width: calc(100% - #{$page-padding * 2});
   height: $button-height-lg;
   background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
   color: $color-text-white;
   font-size: $font-size-md;
   font-weight: $font-weight-semibold;
   border-radius: $radius-button;
-  margin: $spacing-lg $page-padding;
+  margin: $spacing-lg $page-padding $spacing-md;
   transition: all $transition-base;
 
   &:active {
@@ -141,9 +400,9 @@
     opacity: 0.95;
   }
 
-  &.outline {
+  &.outlineBtn {
     background: transparent;
-    border: 1rpx solid $color-border;
+    border: 2rpx solid $color-border;
     color: $color-text-secondary;
   }
 }
@@ -153,55 +412,22 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 120rpx 0;
+  padding: 160rpx 0;
   gap: $spacing-md;
 
-  .icon {
+  .emptyIcon {
     font-size: 120rpx;
     opacity: 0.3;
   }
 
-  .text {
+  .emptyTitle {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+  }
+
+  .emptyDesc {
     font-size: $font-size-sm;
     color: $color-text-tertiary;
-  }
-}
-
-.breakdown {
-  background: $color-bg-page;
-  border-radius: $radius-md;
-  padding: $spacing-md;
-
-  .row {
-    display: flex;
-    justify-content: space-between;
-    padding: $spacing-sm 0;
-
-    .label {
-      font-size: $font-size-sm;
-      color: $color-text-secondary;
-    }
-
-    .value {
-      font-size: $font-size-sm;
-      color: $color-text-primary;
-    }
-
-    &.total {
-      padding-top: $spacing-md;
-      margin-top: $spacing-sm;
-      border-top: 1rpx dashed $color-border;
-
-      .label {
-        font-weight: $font-weight-semibold;
-        color: $color-text-primary;
-      }
-
-      .value {
-        font-weight: $font-weight-bold;
-        color: $color-price;
-        font-size: $font-size-md;
-      }
-    }
   }
 }
