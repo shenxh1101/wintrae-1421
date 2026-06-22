@@ -68,6 +68,7 @@ export interface CareRecord {
   content: string;
   time: string;
   images?: string[];
+  videos?: string[];
   isAbnormal?: boolean;
   abnormalDesc?: string;
 }
@@ -78,6 +79,7 @@ export interface SitterSetting {
   dogBreeds?: string[];
   catBreeds?: string[];
   dailyCapacity: number;
+  currentOccupancy: number;
   dogPrice: number;
   catPrice: number;
   forbiddenConditions: string[];

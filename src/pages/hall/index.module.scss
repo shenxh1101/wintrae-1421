@@ -29,6 +29,20 @@
         font-weight: $font-weight-bold;
         margin-top: 8rpx;
       }
+
+      .priceRow {
+        display: flex;
+        gap: $spacing-md;
+        margin-top: $spacing-sm;
+
+        .priceItem {
+          font-size: $font-size-xs;
+          opacity: 0.95;
+          background: rgba(255, 255, 255, 0.2);
+          padding: 8rpx 16rpx;
+          border-radius: $radius-button;
+        }
+      }
     }
 
     .settingBtn {

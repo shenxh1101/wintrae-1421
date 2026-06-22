@@ -1,0 +1,303 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 160rpx;
+}
+
+.header {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  padding: 48rpx $page-padding 80rpx;
+  color: $color-text-white;
+
+  .label {
+    font-size: $font-size-sm;
+    opacity: 0.9;
+    margin-bottom: $spacing-sm;
+  }
+
+  .amount {
+    font-size: 64rpx;
+    font-weight: $font-weight-bold;
+
+    .unit {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-normal;
+      margin-right: 8rpx;
+    }
+  }
+
+  .desc {
+    font-size: $font-size-xs;
+    opacity: 0.85;
+    margin-top: $spacing-sm;
+  }
+}
+
+.section {
+  background: $color-bg-card;
+  margin: $spacing-md $page-padding;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+  margin-top: -48rpx;
+  position: relative;
+  z-index: 2;
+
+  .sectionTitle {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    margin-bottom: $spacing-lg;
+  }
+}
+
+.methodList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+
+  .methodItem {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+    padding: $spacing-md;
+    background: $color-bg-page;
+    border-radius: $radius-md;
+    border: 2rpx solid transparent;
+    transition: all $transition-base;
+
+    &.active {
+      border-color: $color-primary;
+      background: $color-primary-bg;
+    }
+
+    .icon {
+      width: 72rpx;
+      height: 72rpx;
+      border-radius: $radius-md;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36rpx;
+      background: $color-bg-card;
+    }
+
+    .info {
+      flex: 1;
+
+      .name {
+        font-size: $font-size-md;
+        color: $color-text-primary;
+        font-weight: $font-weight-medium;
+      }
+
+      .desc {
+        font-size: $font-size-xs;
+        color: $color-text-tertiary;
+        margin-top: 4rpx;
+      }
+    }
+
+    .radio {
+      width: 36rpx;
+      height: 36rpx;
+      border-radius: 50%;
+      border: 2rpx solid $color-border;
+      position: relative;
+
+      &.active {
+        border-color: $color-primary;
+        background: $color-primary;
+
+        &::after {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 16rpx;
+          height: 16rpx;
+          border-radius: 50%;
+          background: $color-text-white;
+        }
+      }
+    }
+  }
+}
+
+.amountInput {
+  .label {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    margin-bottom: $spacing-md;
+  }
+
+  .inputBox {
+    display: flex;
+    align-items: center;
+    border-bottom: 2rpx solid $color-border;
+    padding-bottom: $spacing-md;
+
+    .prefix {
+      font-size: 60rpx;
+      font-weight: $font-weight-bold;
+      color: $color-text-primary;
+      margin-right: $spacing-sm;
+    }
+
+    .input {
+      flex: 1;
+      font-size: 60rpx;
+      font-weight: $font-weight-bold;
+      color: $color-text-primary;
+    }
+  }
+
+  .quickAmounts {
+    display: flex;
+    gap: $spacing-sm;
+    margin-top: $spacing-lg;
+
+    .amountBtn {
+      @include button-reset;
+      flex: 1;
+      height: 72rpx;
+      background: $color-bg-page;
+      border-radius: $radius-md;
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+      transition: all $transition-base;
+
+      &:active {
+        opacity: 0.9;
+      }
+
+      &.active {
+        background: $color-primary-bg;
+        color: $color-primary;
+      }
+    }
+  }
+
+  .hint {
+    font-size: $font-size-xs;
+    color: $color-text-tertiary;
+    margin-top: $spacing-md;
+  }
+}
+
+.feeInfo {
+  display: flex;
+  justify-content: space-between;
+  padding: $spacing-md 0;
+  border-top: 1rpx solid $color-divider;
+  margin-top: $spacing-md;
+
+  .label {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+  }
+
+  .value {
+    font-size: $font-size-sm;
+    color: $color-text-primary;
+  }
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: $spacing-lg $page-padding;
+  background: $color-bg-card;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.06);
+
+  .confirmBtn {
+    @include button-reset;
+    width: 100%;
+    height: $button-height-lg;
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+    color: $color-text-white;
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    border-radius: $radius-button;
+    transition: all $transition-base;
+
+    &:active {
+      transform: scale(0.98);
+      opacity: 0.95;
+    }
+
+    &:disabled {
+      opacity: 0.5;
+    }
+  }
+
+  .tip {
+    text-align: center;
+    font-size: $font-size-xs;
+    color: $color-text-tertiary;
+    margin-top: $spacing-sm;
+  }
+}
+
+.successModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+
+  .modalContent {
+    width: 600rpx;
+    background: $color-bg-card;
+    border-radius: $radius-xl;
+    padding: $spacing-2xl;
+    text-align: center;
+
+    .icon {
+      font-size: 120rpx;
+      margin-bottom: $spacing-lg;
+    }
+
+    .title {
+      font-size: $font-size-xl;
+      font-weight: $font-weight-semibold;
+      color: $color-text-primary;
+      margin-bottom: $spacing-sm;
+    }
+
+    .amount {
+      font-size: 56rpx;
+      font-weight: $font-weight-bold;
+      color: $color-price;
+      margin-bottom: $spacing-md;
+    }
+
+    .desc {
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+      line-height: $line-height-loose;
+      margin-bottom: $spacing-xl;
+    }
+
+    .btn {
+      @include button-reset;
+      width: 100%;
+      height: $button-height-lg;
+      background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+      color: $color-text-white;
+      font-size: $font-size-md;
+      font-weight: $font-weight-semibold;
+      border-radius: $radius-button;
+    }
+  }
+}

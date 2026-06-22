@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { View, Text, Button, Image, ScrollView } from '@tarojs/components';
-import Taro from '@tarojs/taro';
+import Taro, { useDidShow } from '@tarojs/taro';
 import styles from './index.module.scss';
-import { mockOrders } from '@/data/orders';
+import { useAppContext } from '@/store';
 import type { Order } from '@/types';
 import { formatDate } from '@/utils';
 import classnames from 'classnames';
@@ -11,11 +11,15 @@ import dayjs from 'dayjs';
 const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
 
 const SchedulePage: React.FC = () => {
+  const { orders, sitterSetting } = useAppContext();
   const [currentMonth, setCurrentMonth] = useState(dayjs());
   const [selectedDate, setSelectedDate] = useState(dayjs());
-  const [orders] = useState<Order[]>(mockOrders);
 
   const today = dayjs();
+
+  useDidShow(() => {
+    console.log('[Schedule] 页面显示');
+  });
 
   const calendarDays = useMemo(() => {
     const year = currentMonth.year();
@@ -104,8 +108,8 @@ const SchedulePage: React.FC = () => {
   };
 
   const handlePetClick = (order: Order) => {
-    console.log('[Schedule] 查看订单:', order.orderNo);
-    Taro.showToast({ title: '订单详情开发中', icon: 'none' });
+    console.log('[Schedule] 查看订单详情:', order.orderNo);
+    Taro.navigateTo({ url: `/pages/order-detail/index?id=${order.id}` });
   };
 
   const isToday = (date: dayjs.Dayjs) => {
@@ -120,12 +124,14 @@ const SchedulePage: React.FC = () => {
     const dateStr = date.format('YYYY-MM-DD');
     if (dateStr === order.checkOutDate) return 'checkout';
     if (order.status === 'ongoing') return 'ongoing';
+    if (order.status === 'pending') return 'pending';
     return 'upcoming';
   };
 
   const statusTextMap: Record<string, string> = {
     ongoing: '入住中',
     upcoming: '待入住',
+    pending: '待接单',
     checkout: '今日离店'
   };
 
@@ -193,6 +199,10 @@ const SchedulePage: React.FC = () => {
             <View className={classnames(styles.dot, styles.upcoming)} />
             <Text className={styles.text}>待入住</Text>
           </View>
+          <View className={styles.legendItem}>
+            <View className={classnames(styles.dot, styles.pending)} />
+            <Text className={styles.text}>待接单</Text>
+          </View>
         </View>
       </View>
 
@@ -201,7 +211,7 @@ const SchedulePage: React.FC = () => {
           {selectedDate.format('M月D日 dddd')}
         </Text>
         <Text className={styles.capacity}>
-          入住 <Text className={styles.num}>{selectedDayOrders.length}</Text> / 5 只
+          入住 <Text className={styles.num}>{selectedDayOrders.length}</Text> / {sitterSetting.dailyCapacity} 只
         </Text>
       </View>
 

@@ -73,11 +73,26 @@ const RecordsPage: React.FC = () => {
 
   const handleRecordClick = (record: CareRecord) => {
     console.log('[Records] 查看记录详情:', record.id);
+    const hasMedia = (record.images && record.images.length > 0) || (record.videos && record.videos.length > 0);
+    
+    const mediaInfo = hasMedia
+      ? `\n\n📷 照片: ${record.images?.length || 0}张 | 🎬 视频: ${record.videos?.length || 0}个`
+      : '';
+
     Taro.showModal({
       title: record.title,
-      content: `${record.time}\n\n${record.content}${record.abnormalDesc ? '\n\n异常：' + record.abnormalDesc : ''}`,
-      showCancel: false,
-      confirmText: '知道了'
+      content: `${record.time}\n\n${record.content}${record.abnormalDesc ? '\n\n⚠️ 异常：' + record.abnormalDesc : ''}${mediaInfo}`,
+      confirmText: hasMedia ? '查看照片' : '知道了',
+      cancelText: '关闭',
+      showCancel: hasMedia,
+      success: (res) => {
+        if (res.confirm && record.images && record.images.length > 0) {
+          Taro.previewImage({
+            current: record.images[0],
+            urls: record.images
+          });
+        }
+      }
     });
   };
 
@@ -153,11 +168,11 @@ const RecordsPage: React.FC = () => {
 
                     <Text className={styles.content}>{record.content}</Text>
 
-                    {record.images && record.images.length > 0 && (
-                      <View className={styles.imageList}>
-                        {record.images.map((img, idx) => (
+                    {(record.images && record.images.length > 0) || (record.videos && record.videos.length > 0) ? (
+                      <View className={styles.mediaList}>
+                        {record.images?.map((img, idx) => (
                           <Image
-                            key={idx}
+                            key={`img-${idx}`}
                             className={styles.imageItem}
                             src={img}
                             mode="aspectFill"
@@ -167,8 +182,21 @@ const RecordsPage: React.FC = () => {
                             }}
                           />
                         ))}
+                        {record.videos?.map((_, idx) => (
+                          <View
+                            key={`video-${idx}`}
+                            className={styles.videoThumb}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              Taro.showToast({ title: '视频播放开发中', icon: 'none' });
+                            }}
+                          >
+                            <Text className={styles.playIcon}>▶️</Text>
+                            <Text className={styles.videoLabel}>视频{idx + 1}</Text>
+                          </View>
+                        ))}
                       </View>
-                    )}
+                    ) : null}
                   </View>
                 ))}
               </View>

@@ -5,6 +5,7 @@ import { mockPets } from '@/data/pets';
 import { mockRecords } from '@/data/records';
 import { mockSitterSetting, mockReviews, mockWallet, mockIncomeRecords, mockMonthlyIncome } from '@/data/wallet';
 import { generateId } from '@/utils';
+import Taro from '@tarojs/taro';
 
 interface MonthlyIncome {
   month: string;
@@ -32,10 +33,17 @@ interface AppContextType extends AppState {
   addRecord: (record: Omit<CareRecord, 'id'>) => void;
   addReviewReply: (reviewId: string, reply: string) => void;
   updatePetRemark: (petId: string, remark: string) => void;
+  addIncomeRecord: (record: Omit<IncomeRecord, 'id'>) => void;
+  resetData: () => void;
   setOrders: Dispatch<SetStateAction<Order[]>>;
   setPets: Dispatch<SetStateAction<Pet[]>>;
   setRecords: Dispatch<SetStateAction<CareRecord[]>>;
+  setWallet: Dispatch<SetStateAction<Wallet>>;
+  setReviews: Dispatch<SetStateAction<Review[]>>;
+  setIncomeRecords: Dispatch<SetStateAction<IncomeRecord[]>>;
 }
+
+const STORAGE_KEY = 'pet_sitter_app_data';
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
@@ -48,10 +56,77 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [wallet, setWallet] = useState<Wallet>(mockWallet);
   const [incomeRecords, setIncomeRecords] = useState<IncomeRecord[]>(mockIncomeRecords);
   const [monthlyIncome] = useState<MonthlyIncome[]>(mockMonthlyIncome);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    console.log('[Store] AppState initialized');
+    loadFromStorage();
   }, []);
+
+  useEffect(() => {
+    if (loaded) {
+      saveToStorage();
+    }
+  }, [orders, pets, records, reviews, sitterSetting, wallet, incomeRecords, loaded]);
+
+  const loadFromStorage = async () => {
+    try {
+      const data = await Taro.getStorage({ key: STORAGE_KEY });
+      if (data.data) {
+        const parsed = JSON.parse(data.data);
+        console.log('[Store] 从缓存加载数据');
+        if (parsed.orders) setOrders(parsed.orders);
+        if (parsed.pets) setPets(parsed.pets);
+        if (parsed.records) setRecords(parsed.records);
+        if (parsed.reviews) setReviews(parsed.reviews);
+        if (parsed.sitterSetting) setSitterSetting(parsed.sitterSetting);
+        if (parsed.wallet) setWallet(parsed.wallet);
+        if (parsed.incomeRecords) setIncomeRecords(parsed.incomeRecords);
+      }
+    } catch (e) {
+      console.log('[Store] 无缓存数据，使用默认数据');
+    } finally {
+      setLoaded(true);
+    }
+  };
+
+  const saveToStorage = async () => {
+    try {
+      const data = {
+        orders,
+        pets,
+        records,
+        reviews,
+        sitterSetting,
+        wallet,
+        incomeRecords
+      };
+      await Taro.setStorage({ key: STORAGE_KEY, data: JSON.stringify(data) });
+      console.log('[Store] 数据已保存到缓存');
+    } catch (e) {
+      console.error('[Store] 保存缓存失败:', e);
+    }
+  };
+
+  const resetData = () => {
+    Taro.showModal({
+      title: '重置数据',
+      content: '确定要重置所有数据吗？此操作不可恢复。',
+      confirmColor: '#ff5252',
+      success: (res) => {
+        if (res.confirm) {
+          setOrders(mockOrders);
+          setPets(mockPets);
+          setRecords(mockRecords);
+          setReviews(mockReviews);
+          setSitterSetting(mockSitterSetting);
+          setWallet(mockWallet);
+          setIncomeRecords(mockIncomeRecords);
+          Taro.removeStorage({ key: STORAGE_KEY });
+          Taro.showToast({ title: '已重置', icon: 'success' });
+        }
+      }
+    });
+  };
 
   const updateSitterSetting = (setting: Partial<SitterSetting>) => {
     console.log('[Store] Update sitter setting:', setting);
@@ -107,6 +182,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     updatePet(petId, { remark });
   };
 
+  const addIncomeRecord = (record: Omit<IncomeRecord, 'id'>) => {
+    console.log('[Store] Add income record:', record.orderNo);
+    const newRecord: IncomeRecord = { ...record, id: generateId() };
+    setIncomeRecords((prev) => [newRecord, ...prev]);
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -127,9 +208,14 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         addRecord,
         addReviewReply,
         updatePetRemark,
+        addIncomeRecord,
+        resetData,
         setOrders,
         setPets,
-        setRecords
+        setRecords,
+        setWallet,
+        setReviews,
+        setIncomeRecords
       }}
     >
       {children}

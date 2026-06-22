@@ -50,6 +50,8 @@ const RecordAddPage: React.FC = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [images, setImages] = useState<string[]>([]);
+  const [videos, setVideos] = useState<string[]>([]);
+  const [mediaType, setMediaType] = useState<'photo' | 'video'>('photo');
   const [isAbnormal, setIsAbnormal] = useState(false);
   const [abnormalDesc, setAbnormalDesc] = useState('');
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
@@ -120,8 +122,27 @@ const RecordAddPage: React.FC = () => {
     });
   };
 
+  const handleAddVideo = () => {
+    Taro.showActionSheet({
+      itemList: ['拍摄视频', '从相册选择'],
+      success: () => {
+        const mockVideos = [
+          'https://www.w3schools.com/html/mov_bbb.mp4',
+          'https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4'
+        ];
+        const randomVideo = mockVideos[Math.floor(Math.random() * mockVideos.length)];
+        setVideos((prev) => [...prev, randomVideo]);
+        Taro.showToast({ title: '视频添加成功', icon: 'success' });
+      }
+    });
+  };
+
   const handleDeleteImage = (index: number) => {
     setImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleDeleteVideo = (index: number) => {
+    setVideos((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSave = () => {
@@ -187,6 +208,7 @@ const RecordAddPage: React.FC = () => {
         content: finalContent,
         time: formatDateTime(dayjs().toDate()),
         images: images.length > 0 ? images : undefined,
+        videos: videos.length > 0 ? videos : undefined,
         isAbnormal: finalIsAbnormal,
         abnormalDesc: finalAbnormalDesc || undefined
       };
@@ -379,29 +401,79 @@ const RecordAddPage: React.FC = () => {
           <Text className={styles.sectionTitle}>
             <Text className={styles.icon}>📷</Text>照片/视频
           </Text>
-          <View className={styles.imageUpload}>
-            {images.map((img, idx) => (
-              <View key={idx} className={styles.imageItem}>
-                <Image className={styles.image} src={img} mode="aspectFill" />
-                <Button
-                  className={styles.deleteBtn}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteImage(idx);
-                  }}
-                >
-                  ×
-                </Button>
-              </View>
-            ))}
-            {images.length < 9 && (
-              <Button className={styles.addBtn} onClick={handleAddImage}>
-                <Text className={styles.plus}>+</Text>
-                <Text>添加照片</Text>
-              </Button>
-            )}
+
+          <View className={styles.mediaTabs}>
+            <Button
+              className={classnames(styles.mediaTab, {
+                [styles.active]: mediaType === 'photo'
+              })}
+              onClick={() => setMediaType('photo')}
+            >
+              📷 照片 ({images.length})
+            </Button>
+            <Button
+              className={classnames(styles.mediaTab, {
+                [styles.active]: mediaType === 'video'
+              })}
+              onClick={() => setMediaType('video')}
+            >
+              🎬 视频 ({videos.length})
+            </Button>
           </View>
-          <Text className={styles.hint}>最多可上传9张照片</Text>
+
+          {mediaType === 'photo' ? (
+            <View className={styles.imageUpload}>
+              {images.map((img, idx) => (
+                <View key={idx} className={styles.imageItem}>
+                  <Image className={styles.image} src={img} mode="aspectFill" />
+                  <Button
+                    className={styles.deleteBtn}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteImage(idx);
+                    }}
+                  >
+                    ×
+                  </Button>
+                </View>
+              ))}
+              {images.length < 9 && (
+                <Button className={styles.addBtn} onClick={handleAddImage}>
+                  <Text className={styles.plus}>+</Text>
+                  <Text>添加照片</Text>
+                </Button>
+              )}
+            </View>
+          ) : (
+            <View className={styles.imageUpload}>
+              {videos.map((_, idx) => (
+                <View key={idx} className={styles.videoItem}>
+                  <View className={styles.videoThumb}>
+                    <Text className={styles.videoIcon}>▶️</Text>
+                    <Text className={styles.videoLabel}>视频{idx + 1}</Text>
+                  </View>
+                  <Button
+                    className={styles.deleteBtn}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteVideo(idx);
+                    }}
+                  >
+                    ×
+                  </Button>
+                </View>
+              ))}
+              {videos.length < 3 && (
+                <Button className={styles.addBtn} onClick={handleAddVideo}>
+                  <Text className={styles.plus}>+</Text>
+                  <Text>添加视频</Text>
+                </Button>
+              )}
+            </View>
+          )}
+          <Text className={styles.hint}>
+            照片最多9张，视频最多3个
+          </Text>
         </View>
       )}
 

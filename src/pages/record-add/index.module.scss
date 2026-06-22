@@ -203,6 +203,50 @@
     }
   }
 
+  .videoItem {
+    width: 180rpx;
+    height: 180rpx;
+    border-radius: $radius-md;
+    position: relative;
+    overflow: hidden;
+
+    .videoThumb {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8rpx;
+      color: $color-text-white;
+
+      .videoIcon {
+        font-size: 48rpx;
+      }
+
+      .videoLabel {
+        font-size: $font-size-xs;
+        opacity: 0.9;
+      }
+    }
+
+    .deleteBtn {
+      position: absolute;
+      top: 4rpx;
+      right: 4rpx;
+      width: 40rpx;
+      height: 40rpx;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.6);
+      color: $color-text-white;
+      font-size: 24rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
   .addBtn {
     @include button-reset;
     width: 180rpx;
@@ -226,6 +270,33 @@
     .plus {
       font-size: 48rpx;
       line-height: 1;
+    }
+  }
+}
+
+.mediaTabs {
+  display: flex;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-md;
+
+  .mediaTab {
+    @include button-reset;
+    flex: 1;
+    height: 72rpx;
+    border-radius: $radius-md;
+    background: $color-bg-page;
+    color: $color-text-secondary;
+    font-size: $font-size-sm;
+    transition: all $transition-base;
+
+    &:active {
+      opacity: 0.9;
+    }
+
+    &.active {
+      background: $color-primary-bg;
+      color: $color-primary;
+      font-weight: $font-weight-medium;
     }
   }
 }

@@ -145,6 +145,10 @@
           &.upcoming {
             background: $color-warning;
           }
+
+          &.pending {
+            background: $color-primary;
+          }
         }
       }
     }
@@ -170,6 +174,7 @@
 
         &.ongoing { background: $color-success; }
         &.upcoming { background: $color-warning; }
+        &.pending { background: $color-primary; }
       }
 
       .text {
@@ -292,6 +297,11 @@
 
     &.checkout {
       background: $color-primary-bg;
+      color: $color-primary;
+    }
+
+    &.pending {
+      background: rgba(255, 122, 69, 0.1);
       color: $color-primary;
     }
   }

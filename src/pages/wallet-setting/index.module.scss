@@ -1,0 +1,132 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 40rpx;
+}
+
+.section {
+  background: $color-bg-card;
+  margin: $spacing-md $page-padding;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  box-shadow: $shadow-card;
+
+  .sectionTitle {
+    font-size: $font-size-xs;
+    color: $color-text-tertiary;
+    padding: $spacing-md $spacing-lg $spacing-sm;
+  }
+}
+
+.settingItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-md $spacing-lg;
+  border-bottom: 1rpx solid $color-divider;
+  transition: all $transition-base;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:active {
+    background: $color-bg-hover;
+  }
+
+  .left {
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+
+    .icon {
+      width: 64rpx;
+      height: 64rpx;
+      border-radius: $radius-md;
+      background: $color-primary-bg;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32rpx;
+    }
+
+    .info {
+      .name {
+        font-size: $font-size-md;
+        color: $color-text-primary;
+      }
+
+      .desc {
+        font-size: $font-size-xs;
+        color: $color-text-tertiary;
+        margin-top: 4rpx;
+      }
+    }
+  }
+
+  .right {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+
+    .value {
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+    }
+
+    .arrow {
+      font-size: $font-size-lg;
+      color: $color-text-tertiary;
+    }
+
+    .switch {
+      width: 88rpx;
+      height: 48rpx;
+      border-radius: 24rpx;
+      background: $color-border;
+      position: relative;
+      transition: all $transition-base;
+
+      &.active {
+        background: $color-primary;
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 4rpx;
+        left: 4rpx;
+        width: 40rpx;
+        height: 40rpx;
+        border-radius: 50%;
+        background: $color-bg-card;
+        transition: all $transition-base;
+        box-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.1);
+      }
+
+      &.active::after {
+        left: 44rpx;
+      }
+    }
+  }
+}
+
+.logoutBtn {
+  @include button-reset;
+  width: calc(100% - #{$page-padding} * 2);
+  height: $button-height-lg;
+  margin: $spacing-xl $page-padding;
+  background: $color-bg-card;
+  color: $color-error;
+  font-size: $font-size-md;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.98);
+    opacity: 0.95;
+  }
+}

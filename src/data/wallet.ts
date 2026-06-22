@@ -98,6 +98,7 @@ export const mockSitterSetting: SitterSetting = {
   dogBreeds: ['金毛', '柯基', '泰迪', '边牧'],
   catBreeds: ['布偶', '英短', '美短', '橘猫'],
   dailyCapacity: 5,
+  currentOccupancy: 2,
   dogPrice: 80,
   catPrice: 60,
   forbiddenConditions: ['烈性犬', '未打疫苗', '有传染病', '怀孕宠物'],

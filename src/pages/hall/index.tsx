@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, Button, ScrollView } from '@tarojs/components';
-import Taro from '@tarojs/taro';
+import Taro, { useDidShow } from '@tarojs/taro';
 import styles from './index.module.scss';
 import OrderCard from '@/components/OrderCard';
 import { useAppContext } from '@/store';
@@ -20,10 +20,18 @@ const HallPage: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
+  const loadData = () => {
     setLoading(true);
     setTimeout(() => setLoading(false), 300);
+  };
+
+  useEffect(() => {
+    loadData();
   }, []);
+
+  useDidShow(() => {
+    console.log('[Hall] 页面显示，刷新数据');
+  });
 
   const onRefresh = useCallback(() => {
     setLoading(true);
@@ -87,7 +95,9 @@ const HallPage: React.FC = () => {
     checkOut: 2,
     pending: orders.filter((o) => o.status === 'pending').length,
     monthIncome: '2,340',
-    capacity: `${sitterSetting.currentOccupancy}/${sitterSetting.dailyCapacity}`
+    capacity: `${sitterSetting.currentOccupancy}/${sitterSetting.dailyCapacity}`,
+    dogPrice: sitterSetting.dogPrice,
+    catPrice: sitterSetting.catPrice
   };
 
   return (
@@ -97,8 +107,19 @@ const HallPage: React.FC = () => {
           <View className={styles.text}>
             <Text className={styles.hello}>早上好，寄养管家</Text>
             <Text className={styles.title}>
-              今天有 {stats.pending} 个新订单 · 容量 {stats.capacity}
+              今天有 {stats.pending} 个新订单
             </Text>
+            <View className={styles.priceRow}>
+              <Text className={styles.priceItem}>
+                🐕 狗狗 ¥{stats.dogPrice}/天
+              </Text>
+              <Text className={styles.priceItem}>
+                🐱 猫咪 ¥{stats.catPrice}/天
+              </Text>
+              <Text className={styles.priceItem}>
+                🏠 容量 {stats.capacity}
+              </Text>
+            </View>
           </View>
           <Button className={styles.settingBtn} onClick={handleSetting}>
             ⚙

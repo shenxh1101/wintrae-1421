@@ -30,16 +30,7 @@ const WalletPage: React.FC = () => {
 
   const handleWithdraw = () => {
     console.log('[Wallet] 提现');
-    Taro.showActionSheet({
-      itemList: ['微信提现', '支付宝提现'],
-      success: (res) => {
-        const methods = ['微信', '支付宝'];
-        Taro.showToast({
-          title: `${methods[res.tapIndex]}提现开发中`,
-          icon: 'none'
-        });
-      }
-    });
+    Taro.navigateTo({ url: '/pages/withdraw/index' });
   };
 
   const handleFeatureClick = (key: string) => {
@@ -57,6 +48,9 @@ const WalletPage: React.FC = () => {
         break;
       case 'withdraw':
         handleWithdraw();
+        break;
+      case 'setting':
+        Taro.navigateTo({ url: '/pages/wallet-setting/index' });
         break;
       default:
         Taro.showToast({ title: '功能开发中', icon: 'none' });

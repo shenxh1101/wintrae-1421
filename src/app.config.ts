@@ -12,7 +12,9 @@ export default defineAppConfig({
     'pages/record-add/index',
     'pages/review-reply/index',
     'pages/regular-pets/index',
-    'pages/bill-detail/index'
+    'pages/bill-detail/index',
+    'pages/withdraw/index',
+    'pages/wallet-setting/index'
   ],
   window: {
     backgroundTextStyle: 'light',
