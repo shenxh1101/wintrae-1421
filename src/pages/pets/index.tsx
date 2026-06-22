@@ -3,7 +3,7 @@ import { View, Text, Button, ScrollView, Input } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
 import PetCard from '@/components/PetCard';
-import { mockPets } from '@/data/pets';
+import { useAppContext } from '@/store';
 import type { Pet } from '@/types';
 import classnames from 'classnames';
 
@@ -14,19 +14,15 @@ const categoryOptions = [
 ];
 
 const PetsPage: React.FC = () => {
-  const [pets, setPets] = useState<Pet[]>([]);
+  const { pets } = useAppContext();
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [searchText, setSearchText] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    loadPets();
+    setLoading(true);
+    setTimeout(() => setLoading(false), 200);
   }, []);
-
-  const loadPets = () => {
-    setTimeout(() => {
-      setPets(mockPets);
-    }, 200);
-  };
 
   const filteredPets = pets.filter((pet) => {
     if (activeCategory !== 'all' && pet.type !== activeCategory) return false;
@@ -39,11 +35,16 @@ const PetsPage: React.FC = () => {
 
   const handlePetClick = (pet: Pet) => {
     console.log('[Pets] 查看宠物详情:', pet.name);
-    Taro.showToast({ title: '宠物详情开发中', icon: 'none' });
+    Taro.navigateTo({ url: `/pages/pet-detail/index?id=${pet.id}` });
   };
 
   const handleSearch = (e: any) => {
     setSearchText(e.detail.value);
+  };
+
+  const handleAddPet = () => {
+    console.log('[Pets] 新增宠物档案');
+    Taro.navigateTo({ url: '/pages/pet-add/index' });
   };
 
   const dogCount = pets.filter((p) => p.type === 'dog').length;
@@ -61,6 +62,9 @@ const PetsPage: React.FC = () => {
             onInput={handleSearch}
           />
         </View>
+        <Button className={styles.addBtn} onClick={handleAddPet}>
+          + 新增
+        </Button>
       </View>
 
       <View className={styles.categoryTabs}>
@@ -95,7 +99,7 @@ const PetsPage: React.FC = () => {
       </View>
 
       <ScrollView scrollY style={{ height: 'calc(100vh - 420rpx)' }}>
-        {filteredPets.length > 0 ? (
+        {!loading && filteredPets.length > 0 ? (
           <>
             {regularPets.length > 0 && (
               <>
@@ -127,7 +131,14 @@ const PetsPage: React.FC = () => {
         ) : (
           <View className={styles.empty}>
             <Text className={styles.icon}>🐾</Text>
-            <Text className={styles.text}>暂无宠物档案</Text>
+            <Text className={styles.text}>
+              {loading ? '加载中...' : '暂无宠物档案'}
+            </Text>
+            {!loading && (
+              <Button className={styles.emptyAddBtn} onClick={handleAddPet}>
+                + 新增第一个宠物
+              </Button>
+            )}
           </View>
         )}
       </ScrollView>

@@ -9,8 +9,12 @@
 .searchBar {
   padding: $spacing-lg $page-padding;
   background: $color-bg-card;
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
 
   .searchInput {
+    flex: 1;
     display: flex;
     align-items: center;
     height: 80rpx;
@@ -27,6 +31,23 @@
     .placeholder {
       font-size: $font-size-sm;
       color: $color-text-tertiary;
+      flex: 1;
+    }
+  }
+
+  .addBtn {
+    @include button-reset;
+    height: 80rpx;
+    padding: 0 $spacing-lg;
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+    color: $color-text-white;
+    font-size: $font-size-sm;
+    border-radius: $radius-button;
+    transition: all $transition-base;
+
+    &:active {
+      transform: scale(0.96);
+      opacity: 0.9;
     }
   }
 }
@@ -123,5 +144,20 @@
   .text {
     font-size: $font-size-sm;
     color: $color-text-tertiary;
+  }
+
+  .emptyAddBtn {
+    @include button-reset;
+    margin-top: $spacing-md;
+    padding: $spacing-sm $spacing-xl;
+    background: $color-primary-bg;
+    color: $color-primary;
+    font-size: $font-size-sm;
+    border-radius: $radius-button;
+    transition: all $transition-base;
+
+    &:active {
+      opacity: 0.9;
+    }
   }
 }

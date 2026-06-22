@@ -4,7 +4,15 @@ export default defineAppConfig({
     'pages/pets/index',
     'pages/schedule/index',
     'pages/records/index',
-    'pages/wallet/index'
+    'pages/wallet/index',
+    'pages/sitter-setting/index',
+    'pages/order-detail/index',
+    'pages/pet-detail/index',
+    'pages/pet-add/index',
+    'pages/record-add/index',
+    'pages/review-reply/index',
+    'pages/regular-pets/index',
+    'pages/bill-detail/index'
   ],
   window: {
     backgroundTextStyle: 'light',

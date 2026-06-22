@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, Button, Image, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
-import { mockRecords } from '@/data/records';
+import { useAppContext } from '@/store';
 import type { CareRecord, RecordType } from '@/types';
 import { formatDate, getRecordTypeText } from '@/utils';
 import classnames from 'classnames';
@@ -26,25 +26,25 @@ const filterOptions = [
 ];
 
 const RecordsPage: React.FC = () => {
-  const [records, setRecords] = useState<CareRecord[]>([]);
+  const { records } = useAppContext();
   const [activeFilter, setActiveFilter] = useState<string>('all');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    loadRecords();
+    setLoading(true);
+    setTimeout(() => setLoading(false), 200);
   }, []);
 
-  const loadRecords = () => {
-    setTimeout(() => {
-      setRecords([...mockRecords].sort((a, b) => 
-        new Date(b.time).getTime() - new Date(a.time).getTime()
-      ));
-    }, 200);
-  };
+  const sortedRecords = useMemo(() => {
+    return [...records].sort(
+      (a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()
+    );
+  }, [records]);
 
   const filteredRecords = useMemo(() => {
-    if (activeFilter === 'all') return records;
-    return records.filter((r) => r.type === activeFilter);
-  }, [records, activeFilter]);
+    if (activeFilter === 'all') return sortedRecords;
+    return sortedRecords.filter((r) => r.type === activeFilter);
+  }, [sortedRecords, activeFilter]);
 
   const groupedRecords = useMemo(() => {
     const groups: Record<string, CareRecord[]> = {};
@@ -63,15 +63,22 @@ const RecordsPage: React.FC = () => {
       success: (res) => {
         const types: RecordType[] = ['feed', 'walk', 'medicine', 'photo', 'abnormal', 'handover'];
         const type = types[res.tapIndex];
-        Taro.showToast({ title: `添加${getRecordTypeText(type)}记录`, icon: 'none' });
         console.log('[Records] 选择添加类型:', type);
+        Taro.navigateTo({
+          url: `/pages/record-add/index?type=${type}`
+        });
       }
     });
   };
 
   const handleRecordClick = (record: CareRecord) => {
     console.log('[Records] 查看记录详情:', record.id);
-    Taro.showToast({ title: '记录详情开发中', icon: 'none' });
+    Taro.showModal({
+      title: record.title,
+      content: `${record.time}\n\n${record.content}${record.abnormalDesc ? '\n\n异常：' + record.abnormalDesc : ''}`,
+      showCancel: false,
+      confirmText: '知道了'
+    });
   };
 
   const handleImagePreview = (image: string, images: string[]) => {
@@ -99,7 +106,7 @@ const RecordsPage: React.FC = () => {
         <View className={styles.recordList}>
           <View className={styles.timelineLine} />
           
-          {Object.keys(groupedRecords).length > 0 ? (
+          {!loading && Object.keys(groupedRecords).length > 0 ? (
             Object.entries(groupedRecords).map(([date, dayRecords]) => (
               <View key={date} className={styles.dateGroup}>
                 <View className={styles.dateHeader}>
@@ -169,7 +176,14 @@ const RecordsPage: React.FC = () => {
           ) : (
             <View className={styles.empty}>
               <Text className={styles.icon}>📝</Text>
-              <Text className={styles.text}>暂无照护记录</Text>
+              <Text className={styles.text}>
+                {loading ? '加载中...' : '暂无照护记录'}
+              </Text>
+              {!loading && (
+                <Button className={styles.emptyAddBtn} onClick={handleAddRecord}>
+                  + 添加第一条记录
+                </Button>
+              )}
             </View>
           )}
         </View>

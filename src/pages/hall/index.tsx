@@ -3,7 +3,7 @@ import { View, Text, Button, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
 import OrderCard from '@/components/OrderCard';
-import { mockOrders } from '@/data/orders';
+import { useAppContext } from '@/store';
 import type { Order, OrderStatus } from '@/types';
 import classnames from 'classnames';
 
@@ -16,26 +16,22 @@ const filterOptions = [
 ];
 
 const HallPage: React.FC = () => {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const { orders, sitterSetting, updateOrderStatus, setOrders } = useAppContext();
   const [activeFilter, setActiveFilter] = useState<string>('all');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    loadOrders();
-  }, []);
-
-  const loadOrders = () => {
     setLoading(true);
-    setTimeout(() => {
-      setOrders(mockOrders);
-      setLoading(false);
-    }, 300);
-  };
+    setTimeout(() => setLoading(false), 300);
+  }, []);
 
   const onRefresh = useCallback(() => {
-    loadOrders();
-    Taro.stopPullDownRefresh();
-  }, []);
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      Taro.stopPullDownRefresh();
+    }, 300);
+  }, [setLoading]);
 
   useEffect(() => {
     Taro.onPullDownRefresh(() => {
@@ -54,11 +50,7 @@ const HallPage: React.FC = () => {
       content: `确定要接收${order.petName}的寄养订单吗？`,
       success: (res) => {
         if (res.confirm) {
-          setOrders((prev) =>
-            prev.map((o) =>
-              o.id === order.id ? { ...o, status: 'accepted' as OrderStatus } : o
-            )
-          );
+          updateOrderStatus(order.id, 'accepted');
           Taro.showToast({ title: '接单成功', icon: 'success' });
           console.log('[Hall] 接单成功:', order.orderNo);
         }
@@ -82,19 +74,20 @@ const HallPage: React.FC = () => {
 
   const handleOrderClick = (order: Order) => {
     console.log('[Hall] 查看订单详情:', order.orderNo);
-    Taro.showToast({ title: '订单详情开发中', icon: 'none' });
+    Taro.navigateTo({ url: `/pages/order-detail/index?id=${order.id}` });
   };
 
   const handleSetting = () => {
     console.log('[Hall] 进入服务设置');
-    Taro.showToast({ title: '服务设置开发中', icon: 'none' });
+    Taro.navigateTo({ url: '/pages/sitter-setting/index' });
   };
 
   const stats = {
     checkIn: orders.filter((o) => o.status === 'ongoing').length,
     checkOut: 2,
     pending: orders.filter((o) => o.status === 'pending').length,
-    monthIncome: '2,340'
+    monthIncome: '2,340',
+    capacity: `${sitterSetting.currentOccupancy}/${sitterSetting.dailyCapacity}`
   };
 
   return (
@@ -103,7 +96,9 @@ const HallPage: React.FC = () => {
         <View className={styles.greeting}>
           <View className={styles.text}>
             <Text className={styles.hello}>早上好，寄养管家</Text>
-            <Text className={styles.title}>今天有 {stats.pending} 个新订单</Text>
+            <Text className={styles.title}>
+              今天有 {stats.pending} 个新订单 · 容量 {stats.capacity}
+            </Text>
           </View>
           <Button className={styles.settingBtn} onClick={handleSetting}>
             ⚙
@@ -143,7 +138,7 @@ const HallPage: React.FC = () => {
       </ScrollView>
 
       <View className={styles.orderList}>
-        {filteredOrders.length > 0 ? (
+        {!loading && filteredOrders.length > 0 ? (
           filteredOrders.map((order) => (
             <OrderCard
               key={order.id}
@@ -157,7 +152,7 @@ const HallPage: React.FC = () => {
         ) : (
           <View className={styles.empty}>
             <Text className={styles.icon}>📋</Text>
-            <Text className={styles.text}>暂无订单</Text>
+            <Text className={styles.text}>{loading ? '加载中...' : '暂无订单'}</Text>
           </View>
         )}
       </View>

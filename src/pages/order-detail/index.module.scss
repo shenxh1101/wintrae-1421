@@ -1,0 +1,311 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding-bottom: 160rpx;
+}
+
+.statusHeader {
+  padding: 48rpx $page-padding 64rpx;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+
+  .statusBadge {
+    display: inline-block;
+    padding: 8rpx 24rpx;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: $radius-button;
+    font-size: $font-size-sm;
+    margin-bottom: $spacing-md;
+  }
+
+  .statusTitle {
+    font-size: $font-size-xxl;
+    font-weight: $font-weight-bold;
+    margin-bottom: $spacing-sm;
+  }
+
+  .statusDesc {
+    font-size: $font-size-sm;
+    opacity: 0.9;
+  }
+
+  .price {
+    position: absolute;
+    right: $page-padding;
+    top: 48rpx;
+    text-align: right;
+
+    .amount {
+      font-size: 48rpx;
+      font-weight: $font-weight-bold;
+    }
+
+    .label {
+      font-size: $font-size-xs;
+      opacity: 0.8;
+    }
+  }
+}
+
+.section {
+  background: $color-bg-card;
+  margin: $spacing-md $page-padding;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+
+  .sectionTitle {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    margin-bottom: $spacing-lg;
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+
+    .icon {
+      font-size: $font-size-lg;
+    }
+  }
+}
+
+.petInfo {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+
+  .avatar {
+    width: 120rpx;
+    height: 120rpx;
+    border-radius: $radius-lg;
+    object-fit: cover;
+  }
+
+  .info {
+    flex: 1;
+
+    .nameRow {
+      display: flex;
+      align-items: center;
+      gap: $spacing-sm;
+      margin-bottom: $spacing-sm;
+
+      .name {
+        font-size: $font-size-lg;
+        font-weight: $font-weight-semibold;
+        color: $color-text-primary;
+      }
+    }
+
+    .meta {
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+      margin-bottom: 4rpx;
+    }
+  }
+}
+
+.infoRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: $spacing-md 0;
+  border-bottom: 1rpx solid $color-divider;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .label {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    flex-shrink: 0;
+  }
+
+  .value {
+    font-size: $font-size-sm;
+    color: $color-text-primary;
+    text-align: right;
+    flex: 1;
+    margin-left: $spacing-lg;
+  }
+}
+
+.dateCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-lg;
+  background: $color-primary-bg;
+  border-radius: $radius-lg;
+  margin-bottom: $spacing-md;
+
+  .dateItem {
+    flex: 1;
+    text-align: center;
+
+    .dateLabel {
+      font-size: $font-size-xs;
+      color: $color-text-secondary;
+      margin-bottom: $spacing-sm;
+    }
+
+    .dateValue {
+      font-size: $font-size-xl;
+      font-weight: $font-weight-semibold;
+      color: $color-primary;
+    }
+  }
+
+  .arrow {
+    font-size: $font-size-xl;
+    color: $color-primary;
+    padding: 0 $spacing-lg;
+  }
+
+  .days {
+    text-align: center;
+    padding: $spacing-md $spacing-lg;
+    background: $color-primary;
+    color: $color-text-white;
+    border-radius: $radius-lg;
+    margin-left: $spacing-md;
+
+    .num {
+      font-size: $font-size-xl;
+      font-weight: $font-weight-bold;
+    }
+
+    .text {
+      font-size: $font-size-xs;
+    }
+  }
+}
+
+.itemList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+
+  .item {
+    padding: 12rpx 24rpx;
+    background: $color-bg-page;
+    border-radius: $radius-md;
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+
+    .icon {
+      font-size: $font-size-md;
+    }
+  }
+}
+
+.ruleBox {
+  background: $color-bg-page;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+
+  .ruleTitle {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-text-primary;
+    margin-bottom: $spacing-sm;
+  }
+
+  .ruleContent {
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    line-height: $line-height-loose;
+  }
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: $spacing-lg $page-padding;
+  background: $color-bg-card;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.06);
+  display: flex;
+  gap: $spacing-md;
+
+  .btn {
+    @include button-reset;
+    flex: 1;
+    height: $button-height-lg;
+    border-radius: $radius-button;
+    font-size: $font-size-md;
+    font-weight: $font-weight-medium;
+    transition: all $transition-base;
+
+    &:active {
+      transform: scale(0.98);
+      opacity: 0.95;
+    }
+
+    &.primary {
+      background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+      color: $color-text-white;
+    }
+
+    &.outline {
+      background: transparent;
+      border: 1rpx solid $color-border;
+      color: $color-text-secondary;
+    }
+
+    &.danger {
+      background: $color-error-light;
+      color: $color-error;
+      border: none;
+    }
+  }
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 0;
+  gap: $spacing-md;
+
+  .icon {
+    font-size: 120rpx;
+    opacity: 0.3;
+  }
+
+  .text {
+    font-size: $font-size-sm;
+    color: $color-text-tertiary;
+  }
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4rpx 12rpx;
+  border-radius: $radius-xs;
+  font-size: $font-size-xs;
+
+  &.dog {
+    background: rgba(255, 156, 112, 0.15);
+    color: $color-pet-dog;
+  }
+
+  &.cat {
+    background: rgba(124, 77, 255, 0.15);
+    color: $color-pet-cat;
+  }
+
+  &.regular {
+    background: $color-success-light;
+    color: $color-success;
+  }
+}

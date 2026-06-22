@@ -2,14 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Button, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import styles from './index.module.scss';
-import {
-  mockWallet,
-  mockIncomeRecords,
-  mockReviews,
-  mockMonthlyIncome
-} from '@/data/wallet';
+import { useAppContext } from '@/store';
 import type { IncomeRecord, Review } from '@/types';
-
 import classnames from 'classnames';
 
 const tabOptions = [
@@ -25,10 +19,7 @@ const featureList = [
 ];
 
 const WalletPage: React.FC = () => {
-  const [wallet] = useState(mockWallet);
-  const [incomeRecords] = useState<IncomeRecord[]>(mockIncomeRecords);
-  const [reviews] = useState<Review[]>(mockReviews);
-  const [monthlyIncome] = useState(mockMonthlyIncome);
+  const { wallet, incomeRecords, reviews, monthlyIncome } = useAppContext();
   const [activeTab, setActiveTab] = useState('income');
 
   useEffect(() => {
@@ -39,23 +30,57 @@ const WalletPage: React.FC = () => {
 
   const handleWithdraw = () => {
     console.log('[Wallet] 提现');
-    Taro.showToast({ title: '提现功能开发中', icon: 'none' });
+    Taro.showActionSheet({
+      itemList: ['微信提现', '支付宝提现'],
+      success: (res) => {
+        const methods = ['微信', '支付宝'];
+        Taro.showToast({
+          title: `${methods[res.tapIndex]}提现开发中`,
+          icon: 'none'
+        });
+      }
+    });
   };
 
   const handleFeatureClick = (key: string) => {
     console.log('[Wallet] 点击功能:', key);
-    const labelMap: Record<string, string> = {
-      withdraw: '提现',
-      bill: '账单',
-      regular: '常客',
-      setting: '设置'
-    };
-    Taro.showToast({ title: `${labelMap[key]}开发中`, icon: 'none' });
+    switch (key) {
+      case 'regular':
+        Taro.navigateTo({ url: '/pages/regular-pets/index' });
+        break;
+      case 'bill':
+        if (incomeRecords.length > 0) {
+          Taro.navigateTo({ url: `/pages/bill-detail/index?id=${incomeRecords[0].id}` });
+        } else {
+          Taro.showToast({ title: '暂无账单记录', icon: 'none' });
+        }
+        break;
+      case 'withdraw':
+        handleWithdraw();
+        break;
+      default:
+        Taro.showToast({ title: '功能开发中', icon: 'none' });
+    }
   };
 
   const handleReplyReview = (review: Review) => {
     console.log('[Wallet] 回复评价:', review.id);
-    Taro.showToast({ title: '回复功能开发中', icon: 'none' });
+    Taro.navigateTo({ url: `/pages/review-reply/index?id=${review.id}` });
+  };
+
+  const handleIncomeClick = (record: IncomeRecord) => {
+    console.log('[Wallet] 查看账单详情:', record.id);
+    Taro.navigateTo({ url: `/pages/bill-detail/index?id=${record.id}` });
+  };
+
+  const handlePendingClick = () => {
+    console.log('[Wallet] 查看待收款');
+    const pending = incomeRecords.find((r) => r.status === 'pending');
+    if (pending) {
+      Taro.navigateTo({ url: `/pages/bill-detail/index?id=${pending.id}` });
+    } else {
+      Taro.showToast({ title: '暂无待收款', icon: 'none' });
+    }
   };
 
   const renderStars = (rating: number) => {
@@ -74,7 +99,7 @@ const WalletPage: React.FC = () => {
           </View>
         </View>
         <View className={styles.statsRow}>
-          <View className={styles.statItem}>
+          <View className={styles.statItem} onClick={handlePendingClick}>
             <Text className={styles.label}>待收款</Text>
             <Text className={styles.value}>¥{wallet.pendingAmount.toFixed(2)}</Text>
           </View>
@@ -158,7 +183,11 @@ const WalletPage: React.FC = () => {
             <View className={styles.incomeList}>
               {incomeRecords.length > 0 ? (
                 incomeRecords.map((record) => (
-                  <View key={record.id} className={styles.incomeItem}>
+                  <View
+                    key={record.id}
+                    className={styles.incomeItem}
+                    onClick={() => handleIncomeClick(record)}
+                  >
                     <View className={styles.icon}>💰</View>
                     <View className={styles.info}>
                       <Text className={styles.title}>{record.petName}寄养费</Text>
@@ -202,8 +231,11 @@ const WalletPage: React.FC = () => {
                     </View>
                     <Text className={styles.content}>{review.content}</Text>
                     {review.reply ? (
-                      <View className={styles.reply}>
-                        <Text className={styles.replyLabel}>我的回复</Text>
+                      <View
+                        className={styles.reply}
+                        onClick={() => handleReplyReview(review)}
+                      >
+                        <Text className={styles.replyLabel}>我的回复（点击修改）</Text>
                         <Text className={styles.replyContent}>{review.reply}</Text>
                       </View>
                     ) : (

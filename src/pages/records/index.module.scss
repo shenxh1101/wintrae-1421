@@ -222,6 +222,21 @@
     font-size: $font-size-sm;
     color: $color-text-tertiary;
   }
+
+  .emptyAddBtn {
+    @include button-reset;
+    margin-top: $spacing-md;
+    padding: $spacing-sm $spacing-xl;
+    background: $color-primary-bg;
+    color: $color-primary;
+    font-size: $font-size-sm;
+    border-radius: $radius-button;
+    transition: all $transition-base;
+
+    &:active {
+      opacity: 0.9;
+    }
+  }
 }
 
 .timelineLine {
