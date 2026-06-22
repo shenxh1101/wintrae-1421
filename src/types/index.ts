@@ -103,6 +103,21 @@ export interface IncomeRecord {
   type: 'income' | 'withdraw';
   status: 'pending' | 'completed';
   createTime: string;
+  withdrawMethod?: 'wechat' | 'alipay';
+  withdrawAccount?: string;
+}
+
+export interface PaymentAccount {
+  id: string;
+  type: 'wechat' | 'alipay';
+  name: string;
+  account: string;
+  isDefault: boolean;
+}
+
+export interface PaymentPasswordState {
+  hasPassword: boolean;
+  lastSetTime?: string;
 }
 
 export interface Review {

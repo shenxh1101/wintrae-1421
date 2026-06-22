@@ -1,0 +1,192 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+}
+
+.filterTabs {
+  display: flex;
+  background: $color-bg-card;
+  padding: $spacing-md $spacing-lg;
+  gap: $spacing-sm;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+
+  .tab {
+    @include button-reset;
+    flex: 1;
+    height: $button-height-sm;
+    background: $color-bg-page;
+    border-radius: $radius-button;
+    font-size: $font-size-sm;
+    color: $color-text-secondary;
+    transition: all $transition-base;
+
+    &:active {
+      opacity: 0.9;
+    }
+
+    &.active {
+      background: $color-primary;
+      color: $color-text-white;
+      font-weight: $font-weight-medium;
+    }
+  }
+}
+
+.dateGroup {
+  padding: $spacing-lg $spacing-lg 0;
+
+  .dateHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $spacing-md;
+
+    .date {
+      font-size: $font-size-sm;
+      color: $color-text-tertiary;
+    }
+
+    .total {
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+    }
+  }
+
+  .incomeAmount {
+    color: $color-primary;
+    font-weight: $font-weight-medium;
+  }
+
+  .withdrawAmount {
+    color: $color-error;
+    font-weight: $font-weight-medium;
+  }
+}
+
+.billItem {
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+  box-shadow: $shadow-card;
+  display: flex;
+  align-items: center;
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.98);
+    box-shadow: $shadow-card-hover;
+  }
+
+  .icon {
+    width: 72rpx;
+    height: 72rpx;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: $font-size-lg;
+    margin-right: $spacing-md;
+
+    &.income {
+      background: $color-primary-bg;
+    }
+
+    &.withdraw {
+      background: $color-error-light;
+    }
+  }
+
+  .info {
+    flex: 1;
+
+    .title {
+      font-size: $font-size-md;
+      font-weight: $font-weight-medium;
+      color: $color-text-primary;
+      margin-bottom: $spacing-xs;
+    }
+
+    .subInfo {
+      font-size: $font-size-sm;
+      color: $color-text-tertiary;
+    }
+  }
+
+  .right {
+    text-align: right;
+
+    .amount {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-semibold;
+      margin-bottom: $spacing-xs;
+
+      &.income {
+        color: $color-primary;
+      }
+
+      &.withdraw {
+        color: $color-error;
+      }
+    }
+
+    .status {
+      font-size: $font-size-xs;
+      color: $color-text-tertiary;
+
+      &.pending {
+        color: $color-warning;
+      }
+
+      &.completed {
+        color: $color-success;
+      }
+    }
+  }
+}
+
+.empty {
+  padding: $spacing-xxl 0;
+  text-align: center;
+
+  .icon {
+    font-size: 96rpx;
+    margin-bottom: $spacing-md;
+    display: block;
+  }
+
+  .text {
+    font-size: $font-size-md;
+    color: $color-text-tertiary;
+  }
+}
+
+.summaryCard {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  margin: $spacing-lg;
+  padding: $spacing-xl;
+  border-radius: $radius-lg;
+  color: $color-text-white;
+  display: flex;
+  justify-content: space-around;
+
+  .stat {
+    text-align: center;
+
+    .label {
+      font-size: $font-size-sm;
+      opacity: 0.9;
+      margin-bottom: $spacing-xs;
+    }
+
+    .value {
+      font-size: $font-size-xl;
+      font-weight: $font-weight-bold;
+    }
+  }
+}

@@ -299,5 +299,71 @@
       font-weight: $font-weight-semibold;
       border-radius: $radius-button;
     }
+
+    .passwordBoxes {
+      display: flex;
+      justify-content: center;
+      gap: $spacing-md;
+      margin: $spacing-xl 0;
+
+      .pwdBox {
+        width: 80rpx;
+        height: 80rpx;
+        border: 2rpx solid $color-border;
+        border-radius: $radius-md;
+        background: $color-bg-page;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .pwdDot {
+          width: 20rpx;
+          height: 20rpx;
+          border-radius: 50%;
+          background: $color-text-primary;
+        }
+      }
+    }
+
+    .hiddenInput {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .modalBtns {
+      display: flex;
+      gap: $spacing-md;
+      margin-bottom: $spacing-md;
+
+      .modalBtn {
+        @include button-reset;
+        flex: 1;
+        height: $button-height-md;
+        border-radius: $radius-button;
+        font-size: $font-size-md;
+        transition: all $transition-base;
+
+        &:active {
+          opacity: 0.9;
+        }
+
+        &.cancelBtn {
+          background: $color-bg-page;
+          color: $color-text-secondary;
+        }
+
+        &.confirmBtn {
+          background: $color-primary;
+          color: $color-text-white;
+        }
+      }
+    }
+
+    .forgetPwd {
+      font-size: $font-size-sm;
+      color: $color-primary;
+    }
   }
 }

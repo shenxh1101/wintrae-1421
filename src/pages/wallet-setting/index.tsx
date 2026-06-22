@@ -6,34 +6,20 @@ import { useAppContext } from '@/store';
 import classnames from 'classnames';
 
 const WalletSettingPage: React.FC = () => {
-  const { wallet, resetData } = useAppContext();
+  const { wallet, resetData, paymentPassword, paymentAccounts } = useAppContext();
   const [notify, setNotify] = useState(true);
   const [autoAccept, setAutoAccept] = useState(false);
 
   const handlePwdSet = () => {
-    Taro.showModal({
-      title: '设置支付密码',
-      content: '支付密码用于提现等敏感操作，设置后更加安全',
-      confirmText: '去设置',
-      success: (res) => {
-        if (res.confirm) {
-          Taro.showToast({ title: '密码设置开发中', icon: 'none' });
-        }
-      }
-    });
+    Taro.navigateTo({ url: '/pages/password-set/index' });
   };
 
   const handleBankCard = () => {
-    Taro.showActionSheet({
-      itemList: ['添加银行卡', '查看已绑定'],
-      success: () => {
-        Taro.showToast({ title: '银行卡功能开发中', icon: 'none' });
-      }
-    });
+    Taro.navigateTo({ url: '/pages/account-manage/index' });
   };
 
   const handleBill = () => {
-    Taro.navigateTo({ url: '/pages/bill-detail/index' });
+    Taro.navigateTo({ url: '/pages/bill-list/index' });
   };
 
   const handleAbout = () => {
@@ -100,7 +86,9 @@ const WalletSettingPage: React.FC = () => {
             </View>
           </View>
           <View className={styles.right}>
-            <Text className={styles.value}>未设置</Text>
+            <Text className={classnames(styles.value, { [styles.hasValue]: paymentPassword.hasPassword })}>
+              {paymentPassword.hasPassword ? '已设置' : '未设置'}
+            </Text>
             <Text className={styles.arrow}>›</Text>
           </View>
         </View>
@@ -113,7 +101,9 @@ const WalletSettingPage: React.FC = () => {
             </View>
           </View>
           <View className={styles.right}>
-            <Text className={styles.value}>2个账户</Text>
+            <Text className={classnames(styles.value, { [styles.hasValue]: paymentAccounts.length > 0 })}>
+              {paymentAccounts.length > 0 ? `${paymentAccounts.length}个账户` : '未绑定'}
+            </Text>
             <Text className={styles.arrow}>›</Text>
           </View>
         </View>

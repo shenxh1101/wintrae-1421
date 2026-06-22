@@ -14,10 +14,15 @@ const withdrawMethods = [
 const quickAmounts = [50, 100, 200, 500];
 
 const WithdrawPage: React.FC = () => {
-  const { wallet, setWallet, addIncomeRecord } = useAppContext();
+  const { wallet, setWallet, addIncomeRecord, paymentAccounts, paymentPassword, verifyPaymentPassword } = useAppContext();
   const [amount, setAmount] = useState('');
-  const [selectedMethod, setSelectedMethod] = useState('wechat');
+  const [selectedMethod, setSelectedMethod] = useState<'wechat' | 'alipay'>('wechat');
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [pwdInput, setPwdInput] = useState('');
+
+  const defaultAccount = paymentAccounts.find((a) => a.isDefault && a.type === selectedMethod)
+    || paymentAccounts.find((a) => a.type === selectedMethod);
 
   const withdrawFee = 0;
   const actualAmount = parseFloat(amount) || 0;
@@ -48,8 +53,48 @@ const WithdrawPage: React.FC = () => {
       Taro.showToast({ title: '最低提现1元', icon: 'none' });
       return;
     }
+    if (!defaultAccount) {
+      Taro.showModal({
+        title: '请先添加收款账户',
+        content: `请先添加${selectedMethod === 'wechat' ? '微信' : '支付宝'}收款账户`,
+        confirmText: '去添加',
+        success: (res) => {
+          if (res.confirm) {
+            Taro.navigateTo({ url: '/pages/account-manage/index' });
+          }
+        }
+      });
+      return;
+    }
 
-    console.log('[Withdraw] 申请提现:', num, selectedMethod);
+    console.log('[Withdraw] 申请提现:', num, selectedMethod, defaultAccount.account);
+
+    if (paymentPassword.hasPassword) {
+      setShowPasswordModal(true);
+      setPwdInput('');
+    } else {
+      doWithdraw(num);
+    }
+  };
+
+  const handlePasswordConfirm = async () => {
+    if (pwdInput.length !== 6) {
+      Taro.showToast({ title: '请输入6位密码', icon: 'none' });
+      return;
+    }
+
+    const valid = await verifyPaymentPassword(pwdInput);
+    if (valid) {
+      setShowPasswordModal(false);
+      doWithdraw(parseFloat(amount));
+    } else {
+      Taro.showToast({ title: '密码错误', icon: 'error' });
+      setPwdInput('');
+    }
+  };
+
+  const doWithdraw = (num: number) => {
+    console.log('[Withdraw] 执行提现:', num);
     Taro.showLoading({ title: '提交中...' });
 
     setTimeout(() => {
@@ -66,7 +111,9 @@ const WithdrawPage: React.FC = () => {
         amount: num,
         type: 'withdraw',
         status: 'pending',
-        createTime: dayjs().format('YYYY-MM-DD HH:mm')
+        createTime: dayjs().format('YYYY-MM-DD HH:mm'),
+        withdrawMethod: selectedMethod,
+        withdrawAccount: defaultAccount?.name + ' (' + defaultAccount?.account + ')'
       });
 
       Taro.hideLoading();
@@ -176,6 +223,54 @@ const WithdrawPage: React.FC = () => {
         </Button>
         <Text className={styles.tip}>预计1-2个工作日到账</Text>
       </View>
+
+      {showPasswordModal && (
+        <View className={styles.successModal} onClick={() => setShowPasswordModal(false)}>
+          <View className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <Text className={styles.title}>请输入支付密码</Text>
+            <Text className={styles.desc}>提现金额 ¥{actualAmount.toFixed(2)}</Text>
+            
+            <View className={styles.passwordBoxes}>
+              {[0, 1, 2, 3, 4, 5].map((idx) => (
+                <View key={idx} className={styles.pwdBox}>
+                  {pwdInput.length > idx && <View className={styles.pwdDot} />}
+                </View>
+              ))}
+            </View>
+            
+            <Input
+              className={styles.hiddenInput}
+              type='number'
+              maxlength={6}
+              value={pwdInput}
+              onInput={(e) => setPwdInput(e.detail.value)}
+              focus
+            />
+
+            <View className={styles.modalBtns}>
+              <Button
+                className={classnames(styles.modalBtn, styles.cancelBtn)}
+                onClick={() => setShowPasswordModal(false)}
+              >
+                取消
+              </Button>
+              <Button
+                className={classnames(styles.modalBtn, styles.confirmBtn)}
+                onClick={handlePasswordConfirm}
+              >
+                确定
+              </Button>
+            </View>
+
+            <Text
+              className={styles.forgetPwd}
+              onClick={() => Taro.showToast({ title: '请联系客服重置', icon: 'none' })}
+            >
+              忘记密码？
+            </Text>
+          </View>
+        </View>
+      )}
 
       {showSuccess && (
         <View className={styles.successModal} onClick={handleSuccessClose}>

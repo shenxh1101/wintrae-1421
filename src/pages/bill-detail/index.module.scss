@@ -11,6 +11,10 @@
   color: $color-text-white;
   text-align: center;
 
+  &.withdrawHeader {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
   .label {
     font-size: $font-size-sm;
     opacity: 0.9;

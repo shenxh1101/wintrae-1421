@@ -1,4 +1,4 @@
-import type { Wallet, IncomeRecord, Review, SitterSetting } from '@/types';
+import type { Wallet, IncomeRecord, Review, SitterSetting, PaymentAccount } from '@/types';
 
 export const mockWallet: Wallet = {
   balance: 1280.5,
@@ -57,6 +57,47 @@ export const mockIncomeRecords: IncomeRecord[] = [
     type: 'income',
     status: 'completed',
     createTime: '2025-06-08 16:00'
+  },
+  {
+    id: '6',
+    orderId: 'withdraw_1735000000000',
+    orderNo: 'TX20250615103000',
+    petName: '提现到微信',
+    amount: 500,
+    type: 'withdraw',
+    status: 'completed',
+    createTime: '2025-06-15 10:30',
+    withdrawMethod: 'wechat',
+    withdrawAccount: '张** (wx_****88)'
+  },
+  {
+    id: '7',
+    orderId: 'withdraw_1734800000000',
+    orderNo: 'TX20250612142000',
+    petName: '提现到支付宝',
+    amount: 300,
+    type: 'withdraw',
+    status: 'completed',
+    createTime: '2025-06-12 14:20',
+    withdrawMethod: 'alipay',
+    withdrawAccount: '李** (ali_****66)'
+  }
+];
+
+export const mockPaymentAccounts: PaymentAccount[] = [
+  {
+    id: 'a1',
+    type: 'wechat',
+    name: '张三',
+    account: 'wx_zhangsan_88',
+    isDefault: true
+  },
+  {
+    id: 'a2',
+    type: 'alipay',
+    name: '张三',
+    account: 'ali_zhangsan_66',
+    isDefault: false
   }
 ];
 

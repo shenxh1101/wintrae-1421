@@ -1,0 +1,75 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+}
+
+.videoContainer {
+  width: 100%;
+  background: #000;
+
+  .video {
+    width: 100%;
+    height: 56.25vw;
+    background: #000;
+  }
+}
+
+.infoSection {
+  flex: 1;
+  background: $color-bg-card;
+  border-radius: $radius-lg $radius-lg 0 0;
+  margin-top: -$spacing-md;
+  padding: $spacing-xl $spacing-lg;
+
+  .petRow {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+    margin-bottom: $spacing-md;
+
+    .petIcon {
+      font-size: $font-size-xl;
+    }
+
+    .petName {
+      font-size: $font-size-lg;
+      font-weight: $font-weight-semibold;
+      color: $color-text-primary;
+    }
+
+    .recordTime {
+      font-size: $font-size-sm;
+      color: $color-text-tertiary;
+      margin-left: auto;
+    }
+  }
+
+  .divider {
+    height: 1rpx;
+    background: $color-divider;
+    margin: $spacing-md 0;
+  }
+
+  .content {
+    font-size: $font-size-md;
+    color: $color-text-secondary;
+    line-height: $line-height-loose;
+  }
+}
+
+.tips {
+  padding: $spacing-lg;
+  background: $color-primary-bg;
+  margin: 0 $spacing-lg $spacing-lg;
+  border-radius: $radius-md;
+
+  .tipText {
+    font-size: $font-size-sm;
+    color: $color-primary;
+    line-height: $line-height-normal;
+  }
+}

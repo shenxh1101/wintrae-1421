@@ -40,11 +40,7 @@ const WalletPage: React.FC = () => {
         Taro.navigateTo({ url: '/pages/regular-pets/index' });
         break;
       case 'bill':
-        if (incomeRecords.length > 0) {
-          Taro.navigateTo({ url: `/pages/bill-detail/index?id=${incomeRecords[0].id}` });
-        } else {
-          Taro.showToast({ title: '暂无账单记录', icon: 'none' });
-        }
+        Taro.navigateTo({ url: '/pages/bill-list/index' });
         break;
       case 'withdraw':
         handleWithdraw();

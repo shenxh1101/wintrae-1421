@@ -73,24 +73,35 @@ const RecordsPage: React.FC = () => {
 
   const handleRecordClick = (record: CareRecord) => {
     console.log('[Records] 查看记录详情:', record.id);
-    const hasMedia = (record.images && record.images.length > 0) || (record.videos && record.videos.length > 0);
+    const hasImages = record.images && record.images.length > 0;
+    const hasVideos = record.videos && record.videos.length > 0;
+    const hasMedia = hasImages || hasVideos;
     
     const mediaInfo = hasMedia
       ? `\n\n📷 照片: ${record.images?.length || 0}张 | 🎬 视频: ${record.videos?.length || 0}个`
       : '';
 
+    const hasOnlyVideos = !hasImages && hasVideos;
+    const confirmText = hasOnlyVideos ? '查看视频' : (hasImages ? '查看照片' : '知道了');
+
     Taro.showModal({
       title: record.title,
       content: `${record.time}\n\n${record.content}${record.abnormalDesc ? '\n\n⚠️ 异常：' + record.abnormalDesc : ''}${mediaInfo}`,
-      confirmText: hasMedia ? '查看照片' : '知道了',
+      confirmText,
       cancelText: '关闭',
       showCancel: hasMedia,
       success: (res) => {
-        if (res.confirm && record.images && record.images.length > 0) {
-          Taro.previewImage({
-            current: record.images[0],
-            urls: record.images
-          });
+        if (res.confirm) {
+          if (hasOnlyVideos && record.videos) {
+            Taro.navigateTo({
+              url: `/pages/video-preview/index?recordId=${record.id}&videoIndex=0`
+            });
+          } else if (hasImages && record.images) {
+            Taro.previewImage({
+              current: record.images[0],
+              urls: record.images
+            });
+          }
         }
       }
     });
@@ -188,7 +199,10 @@ const RecordsPage: React.FC = () => {
                             className={styles.videoThumb}
                             onClick={(e) => {
                               e.stopPropagation();
-                              Taro.showToast({ title: '视频播放开发中', icon: 'none' });
+                              console.log('[Records] 点击视频:', record.id, idx);
+                              Taro.navigateTo({
+                                url: `/pages/video-preview/index?recordId=${record.id}&videoIndex=${idx}`
+                              });
                             }}
                           >
                             <Text className={styles.playIcon}>▶️</Text>

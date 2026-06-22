@@ -14,7 +14,11 @@ export default defineAppConfig({
     'pages/regular-pets/index',
     'pages/bill-detail/index',
     'pages/withdraw/index',
-    'pages/wallet-setting/index'
+    'pages/wallet-setting/index',
+    'pages/video-preview/index',
+    'pages/password-set/index',
+    'pages/account-manage/index',
+    'pages/bill-list/index'
   ],
   window: {
     backgroundTextStyle: 'light',

@@ -74,6 +74,11 @@
     .value {
       font-size: $font-size-sm;
       color: $color-text-secondary;
+
+      &.hasValue {
+        color: $color-primary;
+        font-weight: $font-weight-medium;
+      }
     }
 
     .arrow {

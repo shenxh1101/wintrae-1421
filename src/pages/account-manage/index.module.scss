@@ -1,0 +1,288 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-bg-page;
+  padding: $spacing-lg 0;
+}
+
+.sectionTitle {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  padding: 0 $spacing-lg;
+  margin-bottom: $spacing-sm;
+}
+
+.accountCard {
+  background: $color-bg-card;
+  margin: 0 $spacing-lg $spacing-md;
+  padding: $spacing-lg;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  display: flex;
+  align-items: center;
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  .icon {
+    width: 80rpx;
+    height: 80rpx;
+    border-radius: $radius-md;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: $font-size-xl;
+    margin-right: $spacing-md;
+
+    &.wechat {
+      background: #e8f5e9;
+    }
+
+    &.alipay {
+      background: #e3f2fd;
+    }
+  }
+
+  .info {
+    flex: 1;
+
+    .name {
+      font-size: $font-size-md;
+      font-weight: $font-weight-medium;
+      color: $color-text-primary;
+      margin-bottom: $spacing-xs;
+    }
+
+    .account {
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+    }
+  }
+
+  .right {
+    display: flex;
+    align-items: center;
+    gap: $spacing-sm;
+
+    .defaultTag {
+      padding: 4rpx 12rpx;
+      background: $color-primary-bg;
+      color: $color-primary;
+      font-size: $font-size-xs;
+      border-radius: $radius-xs;
+    }
+
+    .arrow {
+      font-size: $font-size-xl;
+      color: $color-text-tertiary;
+    }
+  }
+}
+
+.addBtn {
+  @include button-reset;
+  margin: $spacing-lg;
+  height: $button-height-md;
+  background: $color-primary;
+  color: $color-text-white;
+  font-size: $font-size-md;
+  border-radius: $radius-button;
+  transition: all $transition-base;
+
+  &:active {
+    background: $color-primary-dark;
+    opacity: 0.9;
+  }
+}
+
+.empty {
+  padding: $spacing-xxl 0;
+  text-align: center;
+
+  .icon {
+    font-size: 96rpx;
+    margin-bottom: $spacing-md;
+    display: block;
+  }
+
+  .text {
+    font-size: $font-size-md;
+    color: $color-text-tertiary;
+  }
+}
+
+.modalMask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-end;
+  z-index: 1000;
+}
+
+.modalContent {
+  width: 100%;
+  background: $color-bg-card;
+  border-radius: $radius-lg $radius-lg 0 0;
+  padding: $spacing-xl $spacing-lg $spacing-lg;
+
+  .modalTitle {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $color-text-primary;
+    text-align: center;
+    margin-bottom: $spacing-xl;
+  }
+
+  .typeTabs {
+    display: flex;
+    gap: $spacing-md;
+    margin-bottom: $spacing-xl;
+
+    .tab {
+      @include button-reset;
+      flex: 1;
+      height: $button-height-md;
+      background: $color-bg-page;
+      border-radius: $radius-md;
+      font-size: $font-size-md;
+      color: $color-text-secondary;
+      transition: all $transition-base;
+
+      &:active {
+        opacity: 0.9;
+      }
+
+      &.active {
+        background: $color-primary-bg;
+        color: $color-primary;
+        font-weight: $font-weight-medium;
+      }
+    }
+  }
+
+  .formGroup {
+    margin-bottom: $spacing-lg;
+
+    .label {
+      font-size: $font-size-sm;
+      color: $color-text-secondary;
+      margin-bottom: $spacing-sm;
+      display: block;
+    }
+
+    .input {
+      width: 100%;
+      height: $button-height-md;
+      background: $color-bg-page;
+      border: 1rpx solid $color-border;
+      border-radius: $radius-md;
+      padding: 0 $spacing-md;
+      font-size: $font-size-md;
+      color: $color-text-primary;
+    }
+  }
+
+  .defaultRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $spacing-xl;
+
+    .label {
+      font-size: $font-size-md;
+      color: $color-text-primary;
+    }
+
+    .switch {
+      width: 88rpx;
+      height: 48rpx;
+      background: #e0e0e0;
+      border-radius: 24rpx;
+      position: relative;
+      transition: all $transition-base;
+
+      &.active {
+        background: $color-primary;
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        width: 40rpx;
+        height: 40rpx;
+        background: #fff;
+        border-radius: 50%;
+        top: 4rpx;
+        left: 4rpx;
+        transition: all $transition-base;
+        box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.15);
+      }
+
+      &.active::after {
+        left: 44rpx;
+      }
+    }
+  }
+
+  .modalBtns {
+    display: flex;
+    gap: $spacing-md;
+
+    .btn {
+      @include button-reset;
+      flex: 1;
+      height: $button-height-md;
+      border-radius: $radius-button;
+      font-size: $font-size-md;
+      transition: all $transition-base;
+
+      &:active {
+        opacity: 0.9;
+      }
+
+      &.cancel {
+        background: $color-bg-page;
+        color: $color-text-secondary;
+      }
+
+      &.confirm {
+        background: $color-primary;
+        color: $color-text-white;
+      }
+    }
+  }
+}
+
+.actionSheet {
+  background: #f2f2f2;
+
+  .actionItem {
+    @include button-reset;
+    height: 104rpx;
+    background: $color-bg-card;
+    font-size: $font-size-md;
+    color: $color-text-primary;
+    border-bottom: 1rpx solid $color-divider;
+
+    &:active {
+      background: $color-bg-hover;
+    }
+
+    &.danger {
+      color: $color-error;
+    }
+
+    &.cancel {
+      margin-top: $spacing-sm;
+      color: $color-text-secondary;
+      border-bottom: none;
+    }
+  }
+}
